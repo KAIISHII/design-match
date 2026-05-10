@@ -1,0 +1,1656 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design Match — 明星大学デザイン学部 進路適性診断</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Shippori+Mincho+B1:wght@400;500;700;800&family=Zen+Kaku+Gothic+New:wght@300;400;500;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f1ebdc;
+    --bg-soft: #e6dcc4;
+    --bg-dark: #181613;
+    --ink: #161412;
+    --ink-soft: #4a4640;
+    --ink-mute: #7a7468;
+    --accent: #c5362a;
+    --accent-deep: #8a1f17;
+    --accent-soft: #e8b8b0;
+    --paper: #faf6ec;
+    --line: #b8b0a0;
+    --line-soft: #d6cfb9;
+    --gold: #a68641;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    font-weight: 400;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body {
+    background-image:
+      radial-gradient(circle at 20% 80%, rgba(197, 54, 42, 0.04) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(166, 134, 65, 0.05) 0%, transparent 50%);
+    background-attachment: fixed;
+  }
+
+  /* Subtle paper grain via SVG noise */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.4;
+    background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1, 0 0 0 0 0.1, 0 0 0 0 0.1, 0 0 0 0.04 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    mix-blend-mode: multiply;
+  }
+
+  .serif-jp { font-family: 'Shippori Mincho B1', serif; }
+  .serif-en { font-family: 'DM Serif Display', serif; }
+  .display { font-family: 'Cormorant Garamond', serif; }
+
+  /* ───────── HEADER ───────── */
+  header.global {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 22px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(to bottom, rgba(241, 235, 220, 0.95) 0%, rgba(241, 235, 220, 0.85) 70%, transparent 100%);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .logo {
+    display: flex; align-items: baseline; gap: 14px;
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    letter-spacing: 0.02em;
+  }
+
+  .logo .mark {
+    width: 32px; height: 32px;
+    background: var(--accent);
+    color: var(--paper);
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center; justify-content: center;
+    font-size: 16px;
+    transform: translateY(8px);
+    font-style: italic;
+  }
+
+  .logo .jp {
+    font-family: 'Shippori Mincho B1', serif;
+    font-size: 12px;
+    color: var(--ink-soft);
+    letter-spacing: 0.18em;
+    margin-left: 4px;
+  }
+
+  .header-right {
+    display: flex; align-items: center; gap: 24px;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  .progress-mini {
+    display: flex; gap: 4px;
+  }
+  .progress-mini span {
+    width: 18px; height: 2px;
+    background: var(--line-soft);
+    transition: background 0.4s ease;
+  }
+  .progress-mini span.active { background: var(--accent); }
+  .progress-mini span.done { background: var(--ink); }
+
+  /* ───────── SCREENS ───────── */
+  .screen {
+    display: none;
+    min-height: 100vh;
+    padding: 110px 40px 80px;
+    position: relative;
+    z-index: 2;
+    animation: fadeIn 0.6s ease;
+  }
+  .screen.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ───────── WELCOME SCREEN ───────── */
+  #welcome {
+    display: none;
+  }
+  #welcome.active {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    gap: 60px;
+    align-items: center;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .hero-left { position: relative; }
+
+  .hero-meta {
+    display: flex; gap: 16px;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 30px;
+    align-items: center;
+  }
+  .hero-meta::after {
+    content: ''; flex: 1; height: 1px; background: var(--line-soft);
+  }
+
+  .hero-title {
+    font-family: 'Shippori Mincho B1', serif;
+    font-size: clamp(48px, 7vw, 92px);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    margin-bottom: 30px;
+  }
+  .hero-title .accent { color: var(--accent); }
+  .hero-title .em-en {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-weight: 400;
+    color: var(--ink-soft);
+    display: block;
+    font-size: 0.55em;
+    margin-top: 18px;
+    letter-spacing: 0;
+  }
+  .hero-title .vert {
+    display: inline-block;
+    transform: translateY(-0.1em);
+    margin: 0 0.05em;
+    color: var(--accent);
+  }
+
+  .hero-lead {
+    font-size: 16px;
+    line-height: 1.95;
+    color: var(--ink-soft);
+    max-width: 480px;
+    margin-bottom: 44px;
+  }
+
+  .start-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 18px;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 22px 36px 22px 32px;
+    border: none;
+    cursor: pointer;
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    letter-spacing: 0.2em;
+    transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+  .start-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--accent);
+    transform: translateX(-100%);
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    z-index: 0;
+  }
+  .start-btn > * { position: relative; z-index: 1; }
+  .start-btn:hover::before { transform: translateX(0); }
+  .start-btn .arrow {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    line-height: 1;
+    transition: transform 0.4s ease;
+  }
+  .start-btn:hover .arrow { transform: translateX(6px); }
+
+  .hero-foot {
+    margin-top: 40px;
+    display: flex; gap: 50px;
+    border-top: 1px solid var(--line-soft);
+    padding-top: 28px;
+  }
+  .hero-foot .stat {
+    display: flex; flex-direction: column;
+  }
+  .hero-foot .num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 32px;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .hero-foot .lbl {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    margin-top: 6px;
+  }
+
+  /* Hero right – decorative composition */
+  .hero-right {
+    position: relative;
+    aspect-ratio: 1 / 1.1;
+    width: 100%;
+    max-width: 520px;
+    margin-left: auto;
+  }
+
+  .hero-card {
+    position: absolute;
+    background: var(--paper);
+    box-shadow: 0 30px 60px rgba(60, 50, 30, 0.12);
+    padding: 30px;
+    border: 1px solid var(--line-soft);
+    transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .hero-card.c1 {
+    top: 0; left: 0;
+    width: 60%; aspect-ratio: 1/1.3;
+    transform: rotate(-3deg);
+    z-index: 3;
+  }
+  .hero-card.c2 {
+    top: 25%; right: 0;
+    width: 55%; aspect-ratio: 1/1.2;
+    transform: rotate(4deg);
+    z-index: 2;
+    background: var(--accent);
+    color: var(--paper);
+    border-color: var(--accent-deep);
+  }
+  .hero-card.c3 {
+    bottom: 0; left: 15%;
+    width: 50%; aspect-ratio: 1.4/1;
+    transform: rotate(-2deg);
+    z-index: 4;
+    background: var(--bg-dark);
+    color: var(--paper);
+    border-color: #000;
+  }
+  .hero-right:hover .c1 { transform: rotate(-5deg) translate(-8px, -4px); }
+  .hero-right:hover .c2 { transform: rotate(6deg) translate(8px, -4px); }
+  .hero-right:hover .c3 { transform: rotate(-4deg) translate(-4px, 4px); }
+
+  .hero-card .card-num {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: 64px;
+    line-height: 0.9;
+    margin-bottom: 16px;
+  }
+  .hero-card.c1 .card-num { color: var(--accent); }
+  .hero-card.c2 .card-num { color: var(--paper); opacity: 0.5; }
+  .hero-card.c3 .card-num { color: var(--gold); }
+
+  .hero-card .card-label {
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    opacity: 0.7;
+  }
+  .hero-card .card-title {
+    font-family: 'Shippori Mincho B1', serif;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+  .hero-card .card-title.en {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+  }
+
+  /* ───────── QUIZ SCREEN ───────── */
+  #quiz {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .question-meta {
+    display: flex;
+    align-items: baseline;
+    gap: 28px;
+    margin-bottom: 36px;
+    border-bottom: 1px solid var(--line-soft);
+    padding-bottom: 24px;
+  }
+  .question-meta .qnum {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: 96px;
+    line-height: 0.85;
+    color: var(--accent);
+  }
+  .question-meta .qmeta-text {
+    flex: 1;
+  }
+  .question-meta .qcategory {
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    margin-bottom: 8px;
+  }
+  .question-meta .qcategory .sep {
+    color: var(--accent);
+    margin: 0 8px;
+  }
+  .question-meta .qprogress {
+    font-family: 'DM Serif Display', serif;
+    font-size: 14px;
+    letter-spacing: 0.1em;
+    color: var(--ink-soft);
+  }
+  .question-meta .qprogress .of {
+    font-style: italic;
+    margin: 0 4px;
+  }
+
+  .question-title {
+    font-family: 'Shippori Mincho B1', serif;
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 700;
+    line-height: 1.4;
+    letter-spacing: -0.005em;
+    margin-bottom: 14px;
+    max-width: 900px;
+  }
+  .question-sub {
+    font-size: 14px;
+    color: var(--ink-mute);
+    margin-bottom: 50px;
+    letter-spacing: 0.05em;
+  }
+  .question-sub.multi {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .options {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 60px;
+  }
+
+  .option {
+    background: var(--paper);
+    border: 1px solid var(--line-soft);
+    padding: 26px 28px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    position: relative;
+    text-align: left;
+    font-family: inherit;
+    color: inherit;
+    overflow: hidden;
+  }
+  .option::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--accent);
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .option:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 32px rgba(60, 50, 30, 0.08);
+    border-color: var(--ink-soft);
+  }
+  .option:hover::before { transform: scaleY(1); }
+  .option.selected {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+  .option.selected::before {
+    background: var(--accent);
+    transform: scaleY(1);
+  }
+  .option.selected .opt-icon { color: var(--accent); }
+
+  .opt-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 18px;
+  }
+  .opt-letter {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: 28px;
+    line-height: 1;
+    color: var(--accent);
+  }
+  .option.selected .opt-letter { color: var(--accent-soft); }
+  .opt-icon {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    color: var(--line);
+    transition: all 0.3s;
+  }
+  .option.selected .opt-icon::before { content: '●'; color: var(--accent); }
+
+  .opt-title {
+    font-family: 'Shippori Mincho B1', serif;
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 1.5;
+    margin-bottom: 6px;
+  }
+  .opt-desc {
+    font-size: 12px;
+    color: var(--ink-mute);
+    line-height: 1.6;
+  }
+  .option.selected .opt-desc { color: rgba(250, 246, 236, 0.6); }
+
+  .quiz-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--line-soft);
+    padding-top: 30px;
+  }
+
+  .nav-btn {
+    background: transparent;
+    border: 1px solid var(--ink);
+    padding: 16px 28px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink);
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .nav-btn:hover {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .nav-btn.primary {
+    background: var(--accent);
+    color: var(--paper);
+    border-color: var(--accent);
+  }
+  .nav-btn.primary:hover {
+    background: var(--accent-deep);
+    border-color: var(--accent-deep);
+  }
+  .nav-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+  .nav-btn:disabled:hover {
+    background: transparent;
+    color: var(--ink);
+  }
+
+  .progress-bar {
+    flex: 1;
+    margin: 0 50px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .progress-bar .track {
+    flex: 1;
+    height: 1px;
+    background: var(--line-soft);
+    position: relative;
+  }
+  .progress-bar .fill {
+    position: absolute;
+    inset: 0;
+    background: var(--accent);
+    transform-origin: left;
+    transition: transform 0.5s ease;
+  }
+  .progress-bar .pct {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--ink-soft);
+    min-width: 40px;
+  }
+
+  /* ───────── RESULTS SCREEN ───────── */
+  #results {
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+
+  .results-hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: end;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 50px;
+    margin-bottom: 70px;
+  }
+
+  .results-meta {
+    display: flex; gap: 14px;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 24px;
+    align-items: center;
+  }
+  .results-meta .dot {
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+  }
+
+  .results-title {
+    font-family: 'Shippori Mincho B1', serif;
+    font-size: clamp(40px, 5.5vw, 72px);
+    font-weight: 800;
+    line-height: 1.1;
+  }
+  .results-title .em {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-weight: 400;
+    color: var(--accent);
+  }
+
+  .results-summary {
+    border-left: 3px solid var(--accent);
+    padding-left: 28px;
+  }
+  .results-summary .label {
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    margin-bottom: 10px;
+  }
+  .results-summary .text {
+    font-family: 'Shippori Mincho B1', serif;
+    font-size: 17px;
+    line-height: 1.85;
+    color: var(--ink-soft);
+  }
+
+  /* Company cards */
+  .companies {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .company {
+    display: grid;
+    grid-template-columns: 90px 1.4fr 1fr;
+    gap: 40px;
+    padding: 50px 0;
+    border-top: 1px solid var(--line-soft);
+    position: relative;
+    transition: background 0.3s;
+  }
+  .company:last-child { border-bottom: 1px solid var(--line-soft); }
+  .company:hover { background: rgba(250, 246, 236, 0.5); }
+
+  .company.rank-1 {
+    background: linear-gradient(to right, rgba(197, 54, 42, 0.04), transparent 60%);
+  }
+
+  .company-rank {
+    text-align: left;
+  }
+  .rank-num {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: 96px;
+    line-height: 0.85;
+    color: var(--ink);
+  }
+  .company.rank-1 .rank-num { color: var(--accent); }
+  .rank-label {
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    margin-top: 6px;
+  }
+
+  .company-info { }
+
+  .company-tags {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    margin-bottom: 18px;
+  }
+  .company-tag {
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border: 1px solid var(--line);
+    color: var(--ink-soft);
+  }
+  .company-tag.industry {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+  .company-tag.tier {
+    font-weight: 500;
+    border-width: 1.5px;
+  }
+  .company-tag.tier-boutique {
+    background: rgba(197, 54, 42, 0.08);
+    color: var(--accent-deep);
+    border-color: var(--accent);
+  }
+  .company-tag.tier-established {
+    background: rgba(166, 134, 65, 0.1);
+    color: #6e5821;
+    border-color: var(--gold);
+  }
+  .company-tag.tier-major {
+    background: rgba(45, 58, 58, 0.08);
+    color: #2d3a3a;
+    border-color: #6c7777;
+  }
+  .company-tag.tier-friendly {
+    background: rgba(34, 120, 80, 0.1);
+    color: #1a6840;
+    border-color: #3a9a6a;
+  }
+  .company-tag.tier-tama {
+    background: rgba(30, 80, 160, 0.1);
+    color: #1a4a8a;
+    border-color: #4a7ac4;
+  }
+
+  .email-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    margin-left: 8px;
+    padding: 13px 22px;
+    background: transparent;
+    border: 1px solid var(--gold);
+    text-decoration: none;
+    color: var(--ink);
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .email-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--gold);
+    transform: translateX(-101%);
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .email-btn > * { position: relative; z-index: 1; }
+  .email-btn:hover { color: var(--paper); }
+  .email-btn:hover::before { transform: translateX(0); }
+  .email-btn .copied {
+    display: none;
+    color: #1a6840;
+    font-weight: 500;
+  }
+
+  .email-toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--ink);
+    color: var(--paper);
+    padding: 14px 28px;
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    z-index: 999;
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    pointer-events: none;
+  }
+  .email-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .company-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 36px;
+    line-height: 1.05;
+    margin-bottom: 4px;
+  }
+  .company-name-jp {
+    font-family: 'Shippori Mincho B1', serif;
+    font-size: 16px;
+    color: var(--ink-soft);
+    margin-bottom: 18px;
+    letter-spacing: 0.05em;
+  }
+  .company-desc {
+    font-size: 14px;
+    line-height: 1.85;
+    color: var(--ink-soft);
+    margin-bottom: 22px;
+  }
+
+  .why-match {
+    background: var(--paper);
+    border-left: 2px solid var(--accent);
+    padding: 14px 18px;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  .why-match-label {
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+
+  .company-skills {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .match-display {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .match-pct {
+    font-family: 'DM Serif Display', serif;
+    font-size: 56px;
+    line-height: 0.9;
+    color: var(--accent);
+  }
+  .match-pct .sym {
+    font-style: italic;
+    font-size: 36px;
+    color: var(--ink-soft);
+  }
+  .match-label {
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    line-height: 1.4;
+  }
+  .match-label .strong {
+    display: block;
+    font-family: 'Shippori Mincho B1', serif;
+    font-size: 14px;
+    color: var(--ink);
+    text-transform: none;
+    letter-spacing: 0;
+    margin-top: 4px;
+  }
+
+  .skills-label {
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .skills-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--line-soft);
+  }
+
+  .skills-list {
+    display: flex; gap: 8px; flex-wrap: wrap;
+  }
+  .skill {
+    font-size: 12px;
+    padding: 7px 13px;
+    background: var(--bg-soft);
+    border: 1px solid var(--line-soft);
+    color: var(--ink);
+    transition: all 0.25s;
+    cursor: default;
+  }
+  .skill:hover {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+    transform: translateY(-2px);
+  }
+  .skill.essential {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+  .skill.essential::before {
+    content: '★ ';
+    color: var(--accent);
+  }
+
+  /* Company link styling */
+  .company-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    transition: opacity 0.25s;
+  }
+  .company-link:hover { opacity: 0.7; }
+  .company-link:hover .ext-icon {
+    color: var(--accent);
+    transform: translate(3px, -3px);
+  }
+  .ext-icon {
+    display: inline-block;
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: 0.55em;
+    color: var(--line);
+    margin-left: 10px;
+    transition: all 0.3s;
+    vertical-align: 0.4em;
+  }
+
+  .visit-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 22px;
+    padding: 13px 22px;
+    background: transparent;
+    border: 1px solid var(--ink);
+    text-decoration: none;
+    color: var(--ink);
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: 15px;
+    letter-spacing: 0.03em;
+    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+  .visit-link::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--ink);
+    transform: translateX(-101%);
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .visit-link > * { position: relative; z-index: 1; }
+  .visit-link:hover { color: var(--paper); }
+  .visit-link:hover::before { transform: translateX(0); }
+  .visit-link .arr {
+    font-style: normal;
+    transition: transform 0.3s;
+  }
+  .visit-link:hover .arr { transform: translate(4px, -2px); }
+
+  .others-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: inherit;
+    transition: opacity 0.25s;
+  }
+  .others-link:hover { opacity: 0.65; }
+  .others-link:hover .o-name { color: var(--accent); }
+  .others-link .o-name { transition: color 0.25s; }
+
+  /* Bottom action */
+  .results-actions {
+    margin-top: 80px;
+    padding-top: 50px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 30px;
+  }
+
+  .actions-text {
+    font-family: 'Shippori Mincho B1', serif;
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--ink-soft);
+    max-width: 500px;
+  }
+
+  /* Other companies preview */
+  .others {
+    margin-top: 40px;
+    background: var(--paper);
+    padding: 30px 36px;
+    border: 1px dashed var(--line);
+  }
+  .others-label {
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    margin-bottom: 16px;
+  }
+  .others-list {
+    display: flex; gap: 24px; flex-wrap: wrap;
+  }
+  .others-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .others-item .o-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 16px;
+    color: var(--ink);
+  }
+  .others-item .o-pct {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--accent);
+  }
+
+  /* Decorative elements */
+  .deco-rule {
+    height: 1px;
+    background: var(--line-soft);
+    margin: 60px 0;
+    position: relative;
+  }
+  .deco-rule::before {
+    content: '◆';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--bg);
+    padding: 0 14px;
+    color: var(--accent);
+    font-size: 10px;
+  }
+
+  /* ───────── RESPONSIVE ───────── */
+  @media (max-width: 900px) {
+    header.global { padding: 16px 20px; }
+    .screen { padding: 90px 20px 60px; }
+    #welcome.active { grid-template-columns: 1fr; gap: 40px; }
+    .hero-right { max-width: 380px; aspect-ratio: 1/1; }
+    .results-hero { grid-template-columns: 1fr; gap: 30px; }
+    .company {
+      grid-template-columns: 1fr;
+      gap: 24px;
+      padding: 40px 0;
+    }
+    .company-rank { display: flex; align-items: baseline; gap: 16px; }
+    .rank-num { font-size: 64px; }
+    .question-meta { gap: 18px; flex-wrap: wrap; }
+    .question-meta .qnum { font-size: 64px; }
+    .progress-bar { margin: 0 16px; }
+    .nav-btn { padding: 12px 18px; font-size: 11px; }
+    .results-actions { flex-direction: column; align-items: flex-start; }
+    .header-right .lbl { display: none; }
+    .options { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 540px) {
+    .logo { font-size: 18px; }
+    .logo .jp { display: none; }
+    .header-right { font-size: 10px; }
+    .start-btn { padding: 18px 24px; font-size: 12px; }
+    .hero-foot { gap: 24px; flex-wrap: wrap; }
+  }
+
+  /* Loading anim */
+  .loading-dots span {
+    display: inline-block;
+    animation: blink 1.4s infinite both;
+  }
+  .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes blink {
+    0%, 80%, 100% { opacity: 0.2; }
+    40% { opacity: 1; }
+  }
+
+  .reveal { opacity: 0; transform: translateY(20px); }
+  .reveal.in { animation: revealIn 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+  @keyframes revealIn {
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<header class="global">
+  <div class="logo">
+    <span class="mark">M</span>
+    <span>Design Match</span>
+    <span class="jp">明星大学デザイン学部</span>
+  </div>
+  <div class="header-right">
+    <span class="lbl">適性診断 / Aptitude Quiz</span>
+    <div class="progress-mini" id="progressMini"></div>
+  </div>
+</header>
+
+<!-- WELCOME -->
+<section class="screen active" id="welcome">
+  <div class="hero-left">
+    <div class="hero-meta"><span>Vol. 02</span><span>2026 — Spring Edition</span></div>
+    <h1 class="hero-title">
+      あなたの<span class="vert">「</span>デザイン<span class="vert">」</span>は、<br>
+      どこで<span class="accent">花開く</span>か。
+      <span class="em-en">— A career compass for design students.</span>
+    </h1>
+    <p class="hero-lead">
+      8つの問いに答えるだけで、あなたの感性と適性に最も近いクリエイティブ企業を診断。
+      good design companyやtha ltd.のような精鋭スタジオから、大手メーカー、出版社、IT企業、さらに日野・八王子・立川・府中など多摩地域の注目企業まで、149社の中から相性の高い企業をご紹介。各社へのインターン問い合わせメールも1クリックで作成できます。
+    </p>
+    <button type="button" class="start-btn" id="startBtn">
+      <span>診断をはじめる</span><span class="arrow">→</span>
+    </button>
+    <div class="hero-foot">
+      <div class="stat"><span class="num">8</span><span class="lbl">Questions</span></div>
+      <div class="stat"><span class="num">149</span><span class="lbl">Companies</span></div>
+      <div class="stat"><span class="num">≈3</span><span class="lbl">Minutes</span></div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-card c1"><div class="card-num">01</div><div class="card-label">Boutique Studio</div><div class="card-title">good design<br>company</div></div>
+    <div class="hero-card c2"><div class="card-num">02</div><div class="card-label">Major / Lifestyle</div><div class="card-title en"><em>MUJI</em><br>良品計画</div></div>
+    <div class="hero-card c3"><div class="card-num">03</div><div class="card-label">Game / Tech</div><div class="card-title">Cygames<br>& more</div></div>
+  </div>
+</section>
+
+<!-- QUIZ -->
+<section class="screen" id="quiz">
+  <div class="question-meta">
+    <div class="qnum" id="qNum">01</div>
+    <div class="qmeta-text">
+      <div class="qcategory" id="qCategory">Question</div>
+      <div class="qprogress">Q. <span id="qCurrent">1</span> <span class="of">of</span> <span id="qTotal">8</span></div>
+    </div>
+  </div>
+  <h2 class="question-title" id="qTitle"></h2>
+  <p class="question-sub" id="qSub"></p>
+  <div class="options" id="options"></div>
+  <div class="quiz-nav">
+    <button type="button" class="nav-btn" id="prevBtn" disabled><span>←</span> <span>前へ</span></button>
+    <div class="progress-bar">
+      <div class="track"><div class="fill" id="progressFill" style="transform:scaleX(0)"></div></div>
+      <div class="pct" id="progressPct">0%</div>
+    </div>
+    <button type="button" class="nav-btn primary" id="nextBtn" disabled><span>次へ</span> <span>→</span></button>
+  </div>
+</section>
+
+<!-- RESULTS -->
+<section class="screen" id="results">
+  <div class="results-hero">
+    <div>
+      <div class="results-meta"><span class="dot"></span><span>Diagnosis Result</span><span>—</span><span id="resultDate"></span></div>
+      <h2 class="results-title">あなたに<br>ふさわしい<br><span class="em">5つの 現場</span></h2>
+    </div>
+    <div class="results-summary">
+      <div class="label">Your Profile</div>
+      <p class="text" id="profileText"></p>
+    </div>
+  </div>
+  <div class="companies" id="companiesList"></div>
+  <div class="others" id="othersSection">
+    <div class="others-label">— Other Matches / その他の候補企業</div>
+    <div class="others-list" id="othersList"></div>
+  </div>
+  <div class="results-actions">
+    <p class="actions-text">気になる企業のスキルを、これからの学生生活でじっくり育てていきましょう。</p>
+    <button type="button" class="nav-btn primary" id="restartBtn"><span>もう一度診断する</span> <span>↻</span></button>
+  </div>
+</section>
+
+<div class="email-toast" id="emailToast">📧 メールテンプレートをコピーしました</div>
+
+<script>
+/* ═══════════ 52 COMPANIES ═══════════ */
+const COMPANIES=[
+// Graphic / Branding
+{id:"gdc",n:"good design company",jp:"グッドデザインカンパニー",u:"https://www.gooddesigncompany.com/",ind:"Graphic / Branding",tier:"boutique",loc:"東京",t:["graphic","branding","adobe-2d","aesthetic","brand-building","specialist","conceptual","focused-solo","observant","client-facing"],s:["Illustrator","Photoshop/InDesign","タイポグラフィ","ブランディング戦略","コンセプトメイキング"],d:"水野学が率いるブランディングデザイン会社。くまモン、中川政七商店等のブランディングで知られる。"},
+{id:"ndc",n:"Nippon Design Center",jp:"日本デザインセンター",u:"https://www.ndc.co.jp/",ind:"Graphic / Branding",tier:"boutique",loc:"東京・銀座",t:["graphic","branding","adobe-2d","aesthetic","brand-building","specialist","conceptual","focused-solo","observant"],s:["Illustrator","Photoshop","グラフィックデザイン全般","ブランディング","アートディレクション"],d:"原研哉、色部義昭ら日本を代表するデザイナーが所属。無印良品のアートディレクション等を手がける。"},
+{id:"draft",n:"DRAFT",jp:"ドラフト",u:"https://www.draft.co.jp/",ind:"Graphic / Branding",tier:"boutique",loc:"東京・恵比寿",t:["graphic","branding","adobe-2d","aesthetic","brand-building","specialist","create-ideas","focused-solo"],s:["Illustrator","Photoshop","ブランディング","空間も含む総合デザイン","アートディレクション"],d:"宮田識が1978年に設立。広告からCI、空間、プロダクトまで横断的にデザインする老舗スタジオ。"},
+{id:"sunad",n:"SUN-AD",jp:"サン・アド",u:"https://www.sun-ad.co.jp/",ind:"Advertising / Design",tier:"established",loc:"東京・銀座",t:["graphic","branding","adobe-2d","conceptual","brand-building","collaborative","client-facing","communicative","large-impact","director-pm"],s:["Illustrator","Photoshop","広告企画","コピーライティング","プレゼンテーション"],d:"サントリーの広告で知られるクリエイティブエージェンシー。広告・ブランディングの王道。"},
+{id:"taki",n:"TAKI CORPORATION",jp:"たき工房",u:"https://www.taki.co.jp/",ind:"Graphic / Production",tier:"major",loc:"東京・全国",t:["graphic","branding","adobe-2d","collaborative","client-facing","communicative","large-impact","director-pm","approachable","hands-on"],s:["Illustrator","Photoshop","InDesign","制作進行管理","クライアントワーク"],d:"1960年代創業の大手グラフィック制作会社。広告、パッケージ、Webまで幅広く手がける。"},
+{id:"grv",n:"groovisions",jp:"グルーヴィジョンズ",u:"https://groovisions.com/",ind:"Graphic / Motion",tier:"boutique",loc:"東京",t:["graphic","motion","adobe-2d","video-edit","aesthetic","create-ideas","expressive","experimental","specialist","focused-solo"],s:["Illustrator","After Effects","モーショングラフィックス","アートディレクション","空間演出"],d:"1993年結成のクリエイティブユニット。グラフィック・映像・空間を横断する独自のビジュアル表現。"},
+{id:"dentsu",n:"dentsu Japan",jp:"電通",u:"https://www.dentsu.co.jp/",ind:"Advertising / Creative",tier:"major",loc:"東京・全国",t:["graphic","branding","motion","adobe-2d","video-edit","collaborative","client-facing","communicative","large-impact","director-pm","conceptual"],s:["企画力","プレゼンテーション","広告クリエイティブ","コピーライティング","Adobe全般"],d:"日本最大の広告代理店。クリエイティブ職はアートディレクター、デザイナー、CM企画など多岐にわたる。"},
+{id:"hakuhodo",n:"Hakuhodo",jp:"博報堂",u:"https://www.hakuhodo.co.jp/",ind:"Advertising / Creative",tier:"major",loc:"東京・全国",t:["graphic","branding","motion","adobe-2d","video-edit","collaborative","client-facing","communicative","large-impact","director-pm","conceptual","research-driven"],s:["企画力","リサーチ","アートディレクション","コピーライティング","Adobe全般"],d:"「生活者発想」を掲げる大手広告代理店。デザイナー職・アートディレクター職で新卒採用あり。"},
+// UI/UX
+{id:"goodpatch",n:"Goodpatch",jp:"グッドパッチ",u:"https://goodpatch.com/",ind:"UI / UX Design",tier:"established",loc:"東京・渋谷",t:["ux","web","figma","functional","solve-problems","collaborative","research-driven","analytical","large-impact","director-pm"],s:["Figma","ユーザーリサーチ","情報設計","プロトタイピング","デザインシステム"],d:"東証グロース上場のUI/UXデザインカンパニー。ReDesigner for Studentも運営。"},
+{id:"concent",n:"Concent",jp:"コンセント",u:"https://www.concentinc.jp/",ind:"UX / Service Design",tier:"established",loc:"東京・恵比寿",t:["ux","web","figma","functional","solve-problems","collaborative","research-driven","analytical","large-impact","director-pm","communicative"],s:["Figma","UXリサーチ","情報設計","サービスデザイン","HCD(人間中心設計)"],d:"1971年創業、200名超のデザイン会社。エディトリアルからUX・サービスデザインまで。"},
+// Web
+{id:"tha",n:"tha ltd.",jp:"ティー・エイチ・エー",u:"https://tha.jp/",ind:"Web / Interaction",tier:"boutique",loc:"東京",t:["web","interactive","frontend-code","figma","innovative","new-experience","focused-solo","expressive","experimental","specialist","hands-on"],s:["HTML/CSS/JS","WebGL/Three.js","Figma","プログラミング思考","動きのデザイン"],d:"中村勇吾が設立。ユニクロのWeb、INFOBAR UI、NHK「デザインあ」等を手がける。"},
+{id:"lig",n:"LIG",jp:"リグ",u:"https://liginc.co.jp/",ind:"Web / Content",tier:"established",loc:"東京・台東区",t:["web","frontend-code","figma","solve-problems","collaborative","client-facing","communicative","hands-on","approachable","director-pm"],s:["HTML/CSS","JavaScript","Figma","WordPress/CMS","ディレクション"],d:"Web制作・DX支援会社。LIGブログ、デジハリ by LIG等も運営。若手が成長しやすい環境。"},
+{id:"baigie",n:"baigie",jp:"ベイジ",u:"https://baigie.me/",ind:"BtoB Web",tier:"established",loc:"東京・世田谷",t:["web","ux","frontend-code","figma","functional","solve-problems","research-driven","analytical","client-facing","communicative","director-pm"],s:["Figma","HTML/CSS","BtoBマーケティング","情報設計","ライティング"],d:"BtoB企業のWebサイト制作に特化。戦略設計から制作まで一貫対応のスペシャリスト集団。"},
+{id:"kayac",n:"KAYAC",jp:"面白法人カヤック",u:"https://www.kayac.com/",ind:"Web / Creative / Game",tier:"established",loc:"鎌倉・東京",t:["web","game","interactive","frontend-code","figma","innovative","new-experience","collaborative","create-ideas","expressive","experimental","hands-on","approachable"],s:["HTML/CSS/JS","企画力","ゲーム開発","UIデザイン","アイデアの言語化"],d:"「面白法人」を掲げる上場企業。Web・ゲーム・広告・地域活性まで幅広いクリエイティブ。"},
+{id:"bascule",n:"Bascule",jp:"バスキュール",u:"https://www.bascule.co.jp/",ind:"Interactive / Web",tier:"established",loc:"東京・渋谷",t:["web","interactive","motion","frontend-code","video-edit","innovative","new-experience","collaborative","expressive","experimental","hands-on"],s:["インタラクティブ企画","フロントエンド","映像演出","リアルタイム配信技術","企画力"],d:"インタラクティブコンテンツ制作会社。ライブ演出やリアルタイム映像体験を得意とする。"},
+{id:"fourdigit",n:"FOURDIGIT",jp:"フォーデジット",u:"https://www.fourdigit.jp/",ind:"Web / UX",tier:"established",loc:"東京",t:["web","ux","frontend-code","figma","functional","solve-problems","collaborative","analytical","client-facing","director-pm"],s:["Figma","HTML/CSS/JS","UXデザイン","情報設計","プロジェクト管理"],d:"UX起点のWeb制作会社。設計から開発まで一気通貫の体制で、ユーザー体験を重視。"},
+// Product / Industrial
+{id:"takt",n:"TAKT PROJECT",jp:"タクトプロジェクト",u:"https://www.taktproject.com/",ind:"Product / Experimental",tier:"boutique",loc:"東京",t:["product","cad-3d","handcraft","innovative","create-ideas","focused-solo","hands-on","experimental","specialist","researcher","observant","functional"],s:["Rhinoceros/3D CAD","スケッチ","モックアップ制作","素材研究","英語発信"],d:"吉泉聡が設立した実験的プロダクトデザインスタジオ。ミラノ・パリ・香港M+等で展示。"},
+{id:"nendo",n:"nendo",jp:"ネンド",u:"https://www.nendo.jp/",ind:"Product / Cross-disciplinary",tier:"established",loc:"東京・ミラノ",t:["product","spatial","graphic","cad-3d","aesthetic","create-ideas","focused-solo","observant","specialist","large-impact","brand-building","functional"],s:["3Dモデリング","スケッチ","プレゼンテーション","空間設計","グラフィック"],d:"佐藤オオキ率いる国際的デザインオフィス。TOKYO2020聖火台、フランスTGVデザイン等。"},
+{id:"nosigner",n:"NOSIGNER",jp:"ノザイナー",u:"https://nosigner.com/",ind:"Product / Social Design",tier:"boutique",loc:"東京",t:["product","graphic","cad-3d","handcraft","innovative","solve-problems","conceptual","hands-on","experimental","researcher","large-impact"],s:["プロダクトデザイン","ソーシャルデザイン","グラフィック","ブランディング","3Dモデリング"],d:"太刀川英輔が率いる。進化思考を基にしたソーシャルデザインで社会課題に挑むスタジオ。"},
+{id:"weplus",n:"we+",jp:"ウィープラス",u:"https://weplus.jp/",ind:"Product / Art",tier:"boutique",loc:"東京",t:["product","cad-3d","handcraft","aesthetic","create-ideas","focused-solo","experimental","specialist","researcher","observant"],s:["素材研究","試作・プロトタイプ","3Dモデリング","展示設計","リサーチ"],d:"林登志也+安藤北斗による実験的デザインスタジオ。素材と現象の探求から作品を生み出す。"},
+{id:"gk",n:"GK Design Group",jp:"GKデザイングループ",u:"https://www.gk-design.co.jp/",ind:"Product / Industrial",tier:"established",loc:"東京",t:["product","cad-3d","functional","solve-problems","collaborative","observant","large-impact","director-pm","hands-on","specialist"],s:["プロダクトデザイン","3D CAD","人間工学","量産設計","スケッチ"],d:"1957年設立の老舗インダストリアルデザイン。ヤマハバイク、JR Suica改札機等を手がける。"},
+{id:"takram",n:"takram",jp:"タクラム",u:"https://www.takram.com/",ind:"Design Engineering",tier:"boutique",loc:"東京・ロンドン",t:["product","ux","web","figma","cad-3d","innovative","solve-problems","research-driven","analytical","experimental","specialist","researcher"],s:["デザインエンジニアリング","UXデザイン","プロトタイピング","Figma","コーディング"],d:"「デザイン×エンジニアリング」を掲げるクリエイティブファーム。領域横断的な問題解決。"},
+// Spatial / Architecture
+{id:"torafu",n:"TORAFU ARCHITECTS",jp:"トラフ建築設計事務所",u:"http://torafu.com/",ind:"Spatial / Interior",tier:"boutique",loc:"東京・品川",t:["spatial","product","arch-cad","aesthetic","create-ideas","collaborative","observant","specialist","brand-building","hands-on"],s:["AutoCAD/VectorWorks","SketchUp/Rhino","模型制作","素材の知識","図面作成"],d:"鈴野浩一・禿真哉による設計事務所。空間・プロダクト・展示を横断。「空気の器」等。"},
+{id:"suppose",n:"SUPPOSE DESIGN OFFICE",jp:"サポーズデザインオフィス",u:"https://suppose.jp/",ind:"Architecture / Spatial",tier:"boutique",loc:"広島・東京",t:["spatial","arch-cad","aesthetic","create-ideas","focused-solo","observant","specialist","intimate","experimental"],s:["建築設計","AutoCAD","3Dレンダリング","模型制作","コンセプト設計"],d:"谷尻誠+吉田愛による建築設計事務所。建築から社食堂「社食堂」、ホテル事業まで。"},
+{id:"nomura",n:"Nomura Co., Ltd.",jp:"乃村工藝社",u:"https://www.nomurakougei.co.jp/",ind:"Spatial / Exhibition",tier:"major",loc:"東京・全国",t:["spatial","arch-cad","adobe-2d","collaborative","client-facing","communicative","large-impact","director-pm","hands-on","approachable"],s:["空間デザイン","AutoCAD/VectorWorks","プロジェクト管理","クライアントワーク","展示設計"],d:"ミュージアム、商業施設、万博パビリオン等の大型空間デザインを手がける業界最大手。"},
+{id:"tansei",n:"TANSEISHA",jp:"丹青社",u:"https://www.tanseisha.co.jp/",ind:"Spatial / Display",tier:"major",loc:"東京・全国",t:["spatial","arch-cad","adobe-2d","collaborative","client-facing","communicative","large-impact","director-pm","hands-on","approachable"],s:["空間デザイン","ディスプレイ","プロジェクト管理","商業空間","展示企画"],d:"商業施設・文化施設・イベント空間のディスプレイデザイン大手。全国規模のプロジェクト。"},
+{id:"wonderwall",n:"Wonderwall",jp:"ワンダーウォール",u:"https://wonder-wall.com/",ind:"Interior / Retail",tier:"boutique",loc:"東京",t:["spatial","arch-cad","aesthetic","brand-building","focused-solo","observant","specialist","create-ideas"],s:["インテリアデザイン","AutoCAD","素材選定","ブランド空間設計","ディテール"],d:"片山正通が率いるインテリアデザイン事務所。ユニクロ旗艦店やピエール・エルメ等。"},
+// Motion / Creative Studio
+{id:"whatever",n:"Whatever Inc.",jp:"ワットエバー",u:"https://whatever.co/",ind:"Creative Studio",tier:"established",loc:"東京・NY・台北・ベルリン",t:["motion","interactive","video-edit","adobe-2d","innovative","new-experience","create-ideas","collaborative","expressive","experimental","specialist","conceptual"],s:["After Effects","Premiere Pro","企画力","アイデア言語化","英語"],d:"川村真司・富永勇亮のクリエイティブスタジオ。Lyric Speaker、らくがきAR等。"},
+{id:"dam",n:"DRAWING AND MANUAL",jp:"ドローイングアンドマニュアル",u:"https://drawingandmanual.com/",ind:"Motion / Film",tier:"boutique",loc:"東京",t:["motion","graphic","video-edit","adobe-2d","aesthetic","conceptual","create-ideas","focused-solo","expressive","specialist"],s:["After Effects","Premiere Pro","映像演出","タイポグラフィ","絵コンテ"],d:"菱川勢一が設立。Mr.Children MV、NHK大河OP等のモーション・映像デザイン。"},
+{id:"birdman",n:"Birdman",jp:"バードマン",u:"https://birdman.ne.jp/",ind:"Digital Creative",tier:"established",loc:"東京",t:["motion","web","interactive","video-edit","frontend-code","innovative","new-experience","collaborative","expressive","experimental"],s:["デジタルクリエイティブ","映像制作","インタラクティブ","Web制作","企画力"],d:"テクノロジー×クリエイティブで体験型コンテンツを制作。広告・映像・Web・XR。"},
+{id:"party",n:"PARTY",jp:"パーティー",u:"https://prty.jp/",ind:"Creative Lab",tier:"boutique",loc:"東京・NY",t:["motion","interactive","web","video-edit","frontend-code","innovative","new-experience","create-ideas","expressive","experimental","researcher"],s:["企画力","テクノロジー活用","プロトタイピング","映像","インタラクティブ"],d:"中村洋基、清水幹太らが設立。テクノロジーとクリエイティブを融合する実験的集団。"},
+{id:"rhizomatiks",n:"Rhizomatiks",jp:"ライゾマティクス",u:"https://rhizomatiks.com/",ind:"Tech Art / Creative",tier:"boutique",loc:"東京",t:["motion","interactive","frontend-code","video-edit","innovative","new-experience","create-ideas","focused-solo","expressive","experimental","researcher","specialist"],s:["プログラミング","映像制作","インスタレーション","データビジュアライゼーション","Perfume演出技術"],d:"真鍋大度ら。Perfumeの演出技術やメディアアートで世界的に知られるクリエイティブ集団。"},
+// Interactive / Tech Art
+{id:"teamlab",n:"teamLab",jp:"チームラボ",u:"https://www.teamlab.art/",ind:"Digital Art / Interactive",tier:"major",loc:"東京・お台場ほか",t:["interactive","web","game","frontend-code","innovative","new-experience","collaborative","expressive","large-impact","hands-on","create-ideas"],s:["プログラミング","インタラクティブ","空間設計","チームワーク","デジタルアート"],d:"「ボーダレス」等の大型デジタルアートミュージアムを世界展開。テクノロジスト集団。"},
+{id:"oto",n:"1→10",jp:"ワントゥーテン",u:"https://www.1-10.com/",ind:"Tech Creative",tier:"established",loc:"京都・東京",t:["interactive","web","motion","frontend-code","video-edit","innovative","new-experience","collaborative","expressive","experimental","large-impact"],s:["テクノロジー活用","インタラクティブ","映像","企画力","プロジェクト管理"],d:"テクノロジーを軸にしたクリエイティブスタジオ。万博や大型イベントの演出も。"},
+{id:"cekai",n:"CEKAI",jp:"セカイ",u:"https://cekai.jp/",ind:"Creative Collective",tier:"boutique",loc:"東京",t:["graphic","motion","interactive","adobe-2d","video-edit","create-ideas","expressive","experimental","culture-trend","brand-building"],s:["アートディレクション","映像","グラフィック","ブランディング","企画"],d:"様々な領域のクリエイターが集うクリエイティブコレクティブ。広告・映像・ブランド等。"},
+// Game
+{id:"cygames",n:"Cygames",jp:"サイゲームス",u:"https://www.cygames.co.jp/",ind:"Game",tier:"major",loc:"東京・大阪・佐賀",t:["game","adobe-2d","game-engine","handcraft","create-ideas","collaborative","expressive","specialist","large-impact","hands-on"],s:["Photoshop/CLIP STUDIO","キャラクターデザイン","ゲームUI","3DCG","アニメーション"],d:"「最高のコンテンツを作る」コンシューマー・スマホゲームスタジオ。多様なデザイナー職。"},
+{id:"nintendo",n:"Nintendo",jp:"任天堂",u:"https://www.nintendo.co.jp/",ind:"Game",tier:"major",loc:"京都",t:["game","product","game-engine","handcraft","functional","create-ideas","collaborative","observant","specialist","innovative","approachable"],s:["ゲームデザイン","UIデザイン","キャラクターデザイン","3DCG","ユーザビリティ"],d:"世界的ゲーム企業。マリオ、ゼルダ等。デザイン職はUIやキャラクター、パッケージ等。"},
+{id:"capcom",n:"CAPCOM",jp:"カプコン",u:"https://www.capcom.co.jp/",ind:"Game",tier:"major",loc:"大阪",t:["game","adobe-2d","game-engine","handcraft","create-ideas","collaborative","expressive","specialist","large-impact","hands-on"],s:["キャラクターデザイン","コンセプトアート","3DCG","ゲームUI","モーション"],d:"モンスターハンター、バイオハザード等。大阪拠点の大手ゲームメーカー。"},
+{id:"sqex",n:"Square Enix",jp:"スクウェア・エニックス",u:"https://www.square-enix.com/",ind:"Game",tier:"major",loc:"東京・大阪",t:["game","adobe-2d","game-engine","handcraft","create-ideas","collaborative","aesthetic","expressive","specialist","large-impact"],s:["キャラクターデザイン","コンセプトアート","3DCG","ゲームUI","ストーリー構築"],d:"FF、ドラクエ等のRPGで世界的に知られるゲーム会社。ビジュアルの質に定評。"},
+{id:"bnst",n:"Bandai Namco Studios",jp:"バンダイナムコスタジオ",u:"https://www.bandainamcostudios.com/",ind:"Game",tier:"major",loc:"東京",t:["game","adobe-2d","game-engine","handcraft","create-ideas","collaborative","approachable","hands-on","large-impact"],s:["ゲームデザイン","キャラクターデザイン","3DCG","UI/UX","モーション"],d:"鉄拳、テイルズ等のゲーム開発スタジオ。IP(キャラクター)を活かしたデザイン。"},
+{id:"ca",n:"CyberAgent",jp:"サイバーエージェント",u:"https://www.cyberagent.co.jp/",ind:"Web / Game / Ad",tier:"major",loc:"東京・渋谷",t:["web","game","ux","frontend-code","figma","game-engine","collaborative","innovative","large-impact","director-pm","hands-on","approachable"],s:["UIデザイン","Figma","ゲームUI","フロントエンド","広告クリエイティブ"],d:"ABEMA、ゲーム(Cygames親会社)、ネット広告の大手IT企業。デザイナー新卒採用多数。"},
+// Fashion / Textile
+{id:"mina",n:"minä perhonen",jp:"ミナ ペルホネン",u:"https://www.mina-perhonen.jp/",ind:"Fashion / Textile",tier:"boutique",loc:"東京・京都",t:["fashion","handcraft","adobe-2d","aesthetic","culture-trend","create-ideas","focused-solo","observant","specialist","entrepreneur","intimate"],s:["Illustrator","ファッションイラスト","パターンメイキング","縫製・素材知識","テキスタイル"],d:"皆川明が設立。「100年続くブランド」を掲げ、オリジナルテキスタイルから服づくりを行う。"},
+{id:"beams",n:"BEAMS",jp:"ビームス",u:"https://www.beams.co.jp/",ind:"Fashion / Retail",tier:"major",loc:"東京・全国",t:["fashion","graphic","adobe-2d","culture-trend","create-ideas","collaborative","expressive","communicative","brand-building","approachable"],s:["Illustrator/Photoshop","ファッション感度","VMD(店舗演出)","ブランディング","接客"],d:"老舗セレクトショップ。MD、VMD、グラフィック、Webなど多彩なクリエイティブ職。"},
+{id:"ua",n:"UNITED ARROWS",jp:"ユナイテッドアローズ",u:"https://www.united-arrows.co.jp/",ind:"Fashion / Retail",tier:"major",loc:"東京・全国",t:["fashion","graphic","adobe-2d","aesthetic","culture-trend","collaborative","communicative","brand-building","approachable","observant"],s:["VMD","ファッション感度","Adobe系","ブランディング","接客・販売経験"],d:"国内大手セレクトショップ。デザインやVMD、EC運営など多様なクリエイティブ職あり。"},
+{id:"zozo",n:"ZOZO",jp:"ZOZO",u:"https://corp.zozo.com/",ind:"Fashion Tech",tier:"major",loc:"千葉・東京",t:["fashion","web","ux","figma","frontend-code","functional","solve-problems","collaborative","innovative","large-impact","director-pm","hands-on"],s:["UIデザイン","Figma","フロントエンド","データ分析","ファッション感度"],d:"ZOZOTOWN運営。ファッション×テクノロジーでUIデザイナー・フロントエンジニア等を採用。"},
+// Lifestyle / Corporate
+{id:"muji",n:"MUJI / Ryohin Keikaku",jp:"良品計画(無印良品)",u:"https://ryohin-keikaku.jp/",ind:"Lifestyle / Product",tier:"major",loc:"東京・全国",t:["product","spatial","graphic","adobe-2d","cad-3d","functional","approachable","observant","collaborative","large-impact","brand-building","focused-solo"],s:["Illustrator","Photoshop","プロダクトデザイン","観察力","機能美の理解"],d:"無印良品のインハウスデザイン。プロダクト・グラフィック・空間・サインを横断。"},
+{id:"toppan",n:"TOPPAN",jp:"TOPPAN株式会社",u:"https://www.toppan.com/ja/",ind:"Print / Spatial / DX",tier:"major",loc:"東京・全国",t:["graphic","spatial","print","adobe-2d","arch-cad","collaborative","client-facing","communicative","large-impact","director-pm","hands-on","approachable"],s:["Illustrator","Photoshop","InDesign","印刷知識","プロジェクト管理"],d:"1900年創業の印刷大手。販促物から空間プロデュース、デジタルコンテンツまで幅広く。"},
+{id:"loftwork",n:"Loftwork",jp:"ロフトワーク",u:"https://loftwork.com/jp/",ind:"Creative Network",tier:"established",loc:"東京・京都・台湾",t:["web","interactive","ux","figma","solve-problems","collaborative","communicative","research-driven","large-impact","director-pm","experimental","innovative"],s:["プロジェクト管理","リサーチ","ファシリテーション","Figma","資料作成・プレゼン"],d:"共創型クリエイティブカンパニー。FabCafe運営。Webから地域・新規事業まで多領域。"},
+{id:"kokuyo",n:"KOKUYO",jp:"コクヨ",u:"https://www.kokuyo.co.jp/",ind:"Product / Workspace",tier:"major",loc:"大阪・東京",t:["product","spatial","cad-3d","arch-cad","functional","approachable","collaborative","observant","large-impact","director-pm","hands-on"],s:["プロダクトデザイン","空間デザイン","3D CAD","ユーザーリサーチ","素材知識"],d:"文具・家具・オフィスのコクヨ。インハウスデザイナーがワークスペースと文具を設計。"},
+{id:"snowpeak",n:"Snow Peak",jp:"スノーピーク",u:"https://www.snowpeak.co.jp/",ind:"Outdoor / Product",tier:"major",loc:"新潟・東京",t:["product","spatial","cad-3d","handcraft","functional","approachable","create-ideas","focused-solo","observant","intimate","brand-building","entrepreneur"],s:["プロダクトデザイン","3D CAD","素材知識","アウトドア文化への理解","ブランディング"],d:"アウトドア用品メーカー。「人生に野遊びを」を掲げ、プロダクトから空間まで自社デザイン。"},
+// ── 以下：間口が広い企業 50社 ──
+// 印刷・制作
+{id:"dnp",n:"DNP",jp:"大日本印刷",u:"https://www.dnp.co.jp/",ind:"Print / DX",tier:"friendly",loc:"東京・全国",t:["graphic","print","spatial","adobe-2d","collaborative","client-facing","communicative","large-impact","director-pm","hands-on","approachable","solve-problems"],s:["Illustrator","Photoshop","InDesign","印刷知識","企画力"],d:"国内印刷2強の一角。デザイン系総合職でインターンあり。販促・空間・DXまで幅広い。"},
+{id:"kyodo",n:"Kyodo Printing",jp:"共同印刷",u:"https://www.kyodoprinting.co.jp/",ind:"Print / Package",tier:"friendly",loc:"東京",t:["graphic","print","adobe-2d","collaborative","client-facing","communicative","hands-on","approachable","functional"],s:["Illustrator","Photoshop","InDesign","パッケージデザイン","印刷知識"],d:"出版印刷・商業印刷・パッケージの大手。デザイン部門で実務を学べる環境。"},
+{id:"tosho",n:"Tosho Printing",jp:"図書印刷",u:"https://www.tosho.co.jp/",ind:"Print / Editorial",tier:"friendly",loc:"東京",t:["graphic","print","adobe-2d","collaborative","hands-on","approachable","communicative","functional"],s:["Illustrator","InDesign","印刷・製本知識","DTP","校正"],d:"凸版印刷グループの総合印刷会社。書籍・雑誌からパッケージまで。"},
+{id:"raksul",n:"RAKSUL",jp:"ラクスル",u:"https://corp.raksul.com/",ind:"Print Tech",tier:"friendly",loc:"東京",t:["graphic","web","print","adobe-2d","figma","frontend-code","innovative","collaborative","solve-problems","hands-on","approachable","large-impact"],s:["Figma","Illustrator","UIデザイン","マーケティング","データ分析"],d:"印刷×テクノロジーの上場企業。UIデザイナーやグラフィックデザイナーを新卒採用。"},
+{id:"amana",n:"amana",jp:"アマナ",u:"https://amana.jp/",ind:"Visual Production",tier:"friendly",loc:"東京",t:["graphic","motion","adobe-2d","video-edit","collaborative","client-facing","communicative","hands-on","approachable","brand-building","culture-trend"],s:["Photoshop","Premiere Pro","撮影アシスタント","ビジュアル企画","制作進行"],d:"ビジュアルコミュニケーション制作の大手。写真・映像・CG制作でインターン実績あり。"},
+{id:"printpac",n:"Printpac",jp:"プリントパック",u:"https://www.printpac.co.jp/",ind:"Online Print",tier:"friendly",loc:"京都",t:["graphic","print","adobe-2d","functional","collaborative","hands-on","approachable","communicative"],s:["Illustrator","Photoshop","DTP","印刷知識","品質管理"],d:"ネット印刷通販の大手。データチェック・DTPオペレーションから学べる。"},
+{id:"pixta",n:"PIXTA",jp:"ピクスタ",u:"https://pixta.co.jp/",ind:"Visual Platform",tier:"friendly",loc:"東京",t:["graphic","web","adobe-2d","figma","collaborative","solve-problems","hands-on","approachable","innovative"],s:["Figma","Photoshop","UIデザイン","Webデザイン","マーケティング"],d:"写真・イラスト素材プラットフォーム運営。デザイナー職でWebやマーケ領域のインターン。"},
+// 広告・販促
+{id:"daiko",n:"Daiko Advertising",jp:"大広",u:"https://www.daiko.co.jp/",ind:"Advertising",tier:"friendly",loc:"大阪・東京",t:["graphic","motion","adobe-2d","video-edit","collaborative","client-facing","communicative","large-impact","director-pm","conceptual","brand-building"],s:["企画力","Illustrator","Photoshop","プレゼンテーション","コミュニケーション"],d:"博報堂DYグループの大手広告代理店。インターンシップでクリエイティブ体験あり。"},
+{id:"tokyu_agc",n:"Tokyu Agency",jp:"東急エージェンシー",u:"https://www.tokyu-agc.co.jp/",ind:"Advertising",tier:"friendly",loc:"東京",t:["graphic","motion","spatial","adobe-2d","video-edit","collaborative","client-facing","communicative","large-impact","director-pm","brand-building"],s:["企画力","Adobe全般","プロモーション","イベント企画","プレゼンテーション"],d:"東急グループの広告会社。交通・商業施設の広告から空間演出まで。"},
+{id:"jeki",n:"jeki",jp:"ジェイアール東日本企画",u:"https://www.jeki.co.jp/",ind:"Advertising / Transport",tier:"friendly",loc:"東京",t:["graphic","spatial","motion","adobe-2d","collaborative","client-facing","communicative","large-impact","director-pm","approachable"],s:["企画力","Adobe全般","交通広告","デジタルサイネージ","プレゼン"],d:"JR東日本グループの広告会社。駅・電車の交通広告やデジタルサイネージ。"},
+{id:"yomiko",n:"Yomiko Advertising",jp:"読売広告社",u:"https://www.yomiko.co.jp/",ind:"Advertising",tier:"friendly",loc:"東京",t:["graphic","motion","adobe-2d","video-edit","collaborative","client-facing","communicative","large-impact","director-pm"],s:["企画力","Adobe全般","マーケティング","プレゼンテーション","コミュニケーション"],d:"博報堂DYグループの広告代理店。幅広い業種の広告企画に携われる。"},
+{id:"tow_ev",n:"TOW",jp:"ティー・オー・ダブリュー",u:"https://www.tow.co.jp/",ind:"Event / Promotion",tier:"friendly",loc:"東京",t:["spatial","graphic","motion","adobe-2d","video-edit","collaborative","client-facing","communicative","large-impact","hands-on","approachable","create-ideas"],s:["イベント企画","空間演出","Adobe全般","制作進行","コミュニケーション"],d:"イベント・プロモーション制作の上場企業。大型イベントの企画運営に参加できる。"},
+{id:"frontage",n:"Frontage",jp:"フロンテッジ",u:"https://www.frontage.jp/",ind:"Advertising / Digital",tier:"friendly",loc:"東京",t:["graphic","web","motion","adobe-2d","figma","collaborative","client-facing","communicative","large-impact","director-pm","solve-problems"],s:["デジタル広告","Adobe全般","Figma","企画力","マーケティング"],d:"ソニーグループの広告会社。デジタルマーケティングを軸にした広告クリエイティブ。"},
+// IT・Web・テック
+{id:"recruit",n:"Recruit",jp:"リクルート",u:"https://www.recruit.co.jp/",ind:"HR / Media",tier:"friendly",loc:"東京・全国",t:["web","ux","figma","frontend-code","collaborative","solve-problems","analytical","large-impact","director-pm","innovative","hands-on","approachable"],s:["Figma","UIデザイン","ユーザーリサーチ","プロトタイピング","データ分析"],d:"じゃらん、SUUMO、ホットペッパー等を運営。プロダクトデザイナーの新卒・インターン多数。"},
+{id:"mynavi",n:"Mynavi",jp:"マイナビ",u:"https://www.mynavi.jp/",ind:"HR / Media",tier:"friendly",loc:"東京・全国",t:["web","graphic","adobe-2d","figma","collaborative","solve-problems","communicative","large-impact","director-pm","hands-on","approachable"],s:["Figma","Illustrator","Webデザイン","UIデザイン","コーディング基礎"],d:"就活サイト・転職サイト運営の大手。Web・紙媒体のデザイン職でインターンあり。"},
+{id:"mercari",n:"Mercari",jp:"メルカリ",u:"https://about.mercari.com/",ind:"Tech / C2C",tier:"friendly",loc:"東京",t:["web","ux","figma","functional","solve-problems","collaborative","analytical","innovative","large-impact","hands-on"],s:["Figma","UIデザイン","ユーザーリサーチ","プロトタイピング","デザインシステム"],d:"フリマアプリ「メルカリ」運営。デザインインターンでプロダクト改善に取り組める。"},
+{id:"cookpad",n:"Cookpad",jp:"クックパッド",u:"https://info.cookpad.com/",ind:"Food Tech",tier:"friendly",loc:"横浜",t:["web","ux","figma","frontend-code","functional","solve-problems","collaborative","approachable","intimate","hands-on"],s:["Figma","UIデザイン","HTML/CSS","ユーザーリサーチ","食への関心"],d:"料理レシピサービス運営。ユーザーに寄り添うUIデザインを学べるインターン。"},
+{id:"note_inc",n:"note",jp:"note株式会社",u:"https://note.jp/",ind:"Media Platform",tier:"friendly",loc:"東京",t:["web","ux","graphic","figma","frontend-code","collaborative","solve-problems","approachable","innovative","intimate","culture-trend"],s:["Figma","UIデザイン","HTML/CSS","エディトリアルデザイン","コンテンツ企画"],d:"クリエイター向けメディアプラットフォーム「note」運営。デザイナー職あり。"},
+{id:"pepabo",n:"GMO Pepabo",jp:"GMOペパボ",u:"https://pepabo.com/",ind:"Web Service",tier:"friendly",loc:"福岡・東京",t:["web","ux","figma","frontend-code","collaborative","solve-problems","approachable","hands-on","innovative","intimate"],s:["Figma","HTML/CSS","UIデザイン","Webサービス設計","コーディング"],d:"minne、SUZURI、ロリポップ等を運営。Webデザイナーのインターン実績豊富。"},
+{id:"hatena",n:"Hatena",jp:"はてな",u:"https://hatena.co.jp/",ind:"Web / Media",tier:"friendly",loc:"京都・東京",t:["web","ux","figma","frontend-code","collaborative","solve-problems","approachable","innovative","hands-on"],s:["Figma","HTML/CSS","UIデザイン","テクニカルライティング","Webサービス"],d:"はてなブログ・はてなブックマーク運営。サマーインターンでデザイン職募集あり。"},
+{id:"freee_inc",n:"freee",jp:"フリー",u:"https://www.freee.co.jp/",ind:"SaaS / FinTech",tier:"friendly",loc:"東京",t:["web","ux","figma","functional","solve-problems","collaborative","analytical","innovative","large-impact","hands-on"],s:["Figma","UIデザイン","情報設計","アクセシビリティ","プロトタイピング"],d:"クラウド会計ソフトのSaaS企業。UXデザイナーのインターン・新卒採用あり。"},
+{id:"rakus",n:"RAKUS",jp:"ラクス",u:"https://www.rakus.co.jp/",ind:"SaaS / BtoB",tier:"friendly",loc:"東京・大阪",t:["web","ux","figma","functional","solve-problems","collaborative","analytical","approachable","hands-on","large-impact"],s:["Figma","UIデザイン","BtoB SaaS","情報設計","コーディング基礎"],d:"楽楽精算などBtoB SaaSを展開。UIデザイナーとして実務に近い経験が積める。"},
+{id:"retty",n:"Retty",jp:"レッティ",u:"https://corp.retty.me/",ind:"Food Tech",tier:"friendly",loc:"東京",t:["web","ux","figma","functional","solve-problems","collaborative","approachable","hands-on","intimate"],s:["Figma","UIデザイン","ユーザーリサーチ","プロトタイピング","食への関心"],d:"グルメサービス「Retty」運営。少人数チームでプロダクトデザインを学べる。"},
+// メーカー・インハウス
+{id:"panasonic",n:"Panasonic",jp:"パナソニック",u:"https://www.panasonic.com/jp/",ind:"Electronics / Product",tier:"friendly",loc:"大阪・東京",t:["product","spatial","ux","cad-3d","figma","functional","collaborative","observant","large-impact","director-pm","hands-on","approachable","solve-problems"],s:["プロダクトデザイン","3D CAD","UIデザイン","ユーザーリサーチ","企画書作成"],d:"家電・住設の総合メーカー。デザインセンターでプロダクト〜UIまで幅広くインターン。"},
+{id:"sony_corp",n:"Sony",jp:"ソニー",u:"https://www.sony.com/ja/",ind:"Electronics / Entertainment",tier:"friendly",loc:"東京",t:["product","ux","web","cad-3d","figma","innovative","collaborative","observant","large-impact","specialist","hands-on","create-ideas"],s:["プロダクトデザイン","UIデザイン","3D CAD","Figma","コンセプト設計"],d:"ソニーグループのクリエイティブセンター。プロダクト・UI・CMFデザインのインターン。"},
+{id:"iris",n:"IRIS OHYAMA",jp:"アイリスオーヤマ",u:"https://www.irisohyama.co.jp/",ind:"Consumer Product",tier:"friendly",loc:"仙台",t:["product","graphic","adobe-2d","cad-3d","functional","collaborative","hands-on","approachable","large-impact","solve-problems"],s:["プロダクトデザイン","Illustrator","3D CAD","パッケージデザイン","量産知識"],d:"生活用品メーカー。商品企画からパッケージまで幅広くデザイン業務を経験できる。"},
+{id:"cainz",n:"CAINZ",jp:"カインズ",u:"https://www.cainz.co.jp/",ind:"Home Center / PB",tier:"friendly",loc:"埼玉",t:["product","graphic","spatial","adobe-2d","functional","collaborative","hands-on","approachable","large-impact","brand-building","solve-problems"],s:["Illustrator","Photoshop","商品企画","PB開発","店舗デザイン"],d:"ホームセンター大手。PB商品開発やグラフィック、店舗デザインのインターン。"},
+{id:"nitori",n:"NITORI",jp:"ニトリ",u:"https://www.nitori.co.jp/",ind:"Furniture / Interior",tier:"friendly",loc:"札幌・東京",t:["product","spatial","graphic","adobe-2d","cad-3d","functional","collaborative","hands-on","approachable","large-impact","brand-building"],s:["商品企画","Illustrator","店舗デザイン","VMD","3D CAD"],d:"家具・インテリアの大手。商品企画から店舗VMDまでデザインの幅が広い。"},
+{id:"sanrio",n:"Sanrio",jp:"サンリオ",u:"https://www.sanrio.co.jp/",ind:"Character / Entertainment",tier:"friendly",loc:"東京",t:["graphic","fashion","adobe-2d","handcraft","create-ideas","collaborative","approachable","brand-building","culture-trend","expressive"],s:["Illustrator","Photoshop","キャラクターデザイン","商品企画","ライセンスビジネス"],d:"ハローキティ等のキャラクタービジネス。グッズ企画やグラフィックデザインのインターン。"},
+{id:"bandai_toy",n:"BANDAI",jp:"バンダイ",u:"https://www.bandai.co.jp/",ind:"Toy / Character",tier:"friendly",loc:"東京",t:["product","graphic","game","adobe-2d","cad-3d","create-ideas","collaborative","hands-on","approachable","large-impact","expressive"],s:["プロダクトデザイン","Illustrator","3D CAD","キャラクター造形","パッケージ"],d:"おもちゃ・ホビーメーカー。デザイン職でトイ・カプセルトイ等の商品開発に携われる。"},
+{id:"takaratomy",n:"TOMY",jp:"タカラトミー",u:"https://www.takaratomy.co.jp/",ind:"Toy / Product",tier:"friendly",loc:"東京",t:["product","graphic","adobe-2d","cad-3d","create-ideas","collaborative","hands-on","approachable","large-impact","functional"],s:["プロダクトデザイン","3D CAD","Illustrator","おもちゃ設計","パッケージ"],d:"トミカ・プラレール等のおもちゃメーカー。デザイン職で企画からモックアップ制作まで。"},
+{id:"lixil",n:"LIXIL",jp:"リクシル",u:"https://www.lixil.co.jp/",ind:"Housing / Product",tier:"friendly",loc:"東京",t:["product","spatial","cad-3d","arch-cad","functional","collaborative","observant","large-impact","director-pm","hands-on","approachable","solve-problems"],s:["プロダクトデザイン","3D CAD","空間設計","ユーザーリサーチ","素材知識"],d:"住宅設備の大手メーカー。キッチン・バス等のプロダクトデザイン、ショールーム空間設計。"},
+{id:"yamaha_corp",n:"Yamaha",jp:"ヤマハ",u:"https://www.yamaha.com/ja/",ind:"Musical / Product",tier:"friendly",loc:"浜松",t:["product","cad-3d","handcraft","aesthetic","create-ideas","focused-solo","observant","specialist","functional","hands-on"],s:["プロダクトデザイン","3D CAD","スケッチ","CMFデザイン","音響知識"],d:"楽器・音響機器メーカー。プロダクトデザイン部門でのインターン。美しい造形が特徴。"},
+// 出版・メディア
+{id:"kadokawa",n:"KADOKAWA",jp:"KADOKAWA",u:"https://www.kadokawa.co.jp/",ind:"Publishing / Media",tier:"friendly",loc:"東京",t:["graphic","web","game","adobe-2d","figma","create-ideas","collaborative","communicative","culture-trend","brand-building","large-impact","expressive"],s:["Illustrator","Photoshop","InDesign","装丁・エディトリアル","Web/SNS運用"],d:"出版・映像・ゲームの総合エンタメ企業。書籍装丁やWebメディアのデザイン職あり。"},
+{id:"shueisha",n:"Shueisha",jp:"集英社",u:"https://www.shueisha.co.jp/",ind:"Publishing",tier:"friendly",loc:"東京",t:["graphic","web","adobe-2d","create-ideas","collaborative","culture-trend","brand-building","expressive","aesthetic"],s:["InDesign","Illustrator","Photoshop","エディトリアルデザイン","誌面レイアウト"],d:"週刊少年ジャンプ等の大手出版社。雑誌・書籍のエディトリアルデザイン職。"},
+{id:"kodansha",n:"Kodansha",jp:"講談社",u:"https://www.kodansha.co.jp/",ind:"Publishing",tier:"friendly",loc:"東京",t:["graphic","web","adobe-2d","create-ideas","collaborative","culture-trend","brand-building","expressive","aesthetic"],s:["InDesign","Illustrator","Photoshop","書籍装丁","デジタルメディア"],d:"週刊少年マガジン等の大手出版社。デザイン部門で装丁やエディトリアルを担当。"},
+{id:"shogakukan",n:"Shogakukan",jp:"小学館",u:"https://www.shogakukan.co.jp/",ind:"Publishing",tier:"friendly",loc:"東京",t:["graphic","web","adobe-2d","create-ideas","collaborative","culture-trend","approachable","expressive"],s:["InDesign","Illustrator","Photoshop","児童書デザイン","Webコンテンツ"],d:"ドラえもん等のキャラクターと児童書の出版社。幅広い世代向けのデザイン。"},
+{id:"nikkei_bp",n:"Nikkei BP",jp:"日経BP",u:"https://www.nikkeibp.co.jp/",ind:"Business Media",tier:"friendly",loc:"東京",t:["graphic","web","adobe-2d","figma","analytical","collaborative","communicative","large-impact","research-driven"],s:["InDesign","Illustrator","Figma","情報デザイン","データ可視化"],d:"日経ビジネス等のビジネスメディア。情報を分かりやすく伝えるデザインを学べる。"},
+// 小売・ホスピタリティ
+{id:"loft_co",n:"LOFT",jp:"ロフト",u:"https://www.loft.co.jp/",ind:"Variety Store",tier:"friendly",loc:"東京・全国",t:["graphic","spatial","adobe-2d","approachable","collaborative","communicative","brand-building","culture-trend","hands-on"],s:["Illustrator","Photoshop","VMD","POP制作","店舗装飾"],d:"生活雑貨の大手セレクトショップ。VMD・POP・季節装飾のデザインに携われる。"},
+{id:"francfranc",n:"Francfranc",jp:"フランフラン",u:"https://francfranc.com/",ind:"Interior / Lifestyle",tier:"friendly",loc:"東京・全国",t:["product","spatial","graphic","adobe-2d","aesthetic","approachable","collaborative","brand-building","culture-trend","create-ideas"],s:["Illustrator","VMD","商品企画","グラフィック","店舗デザイン"],d:"インテリア・雑貨ブランド。VMDやグラフィック、商品パッケージのデザインに携わる。"},
+{id:"hoshino",n:"Hoshino Resorts",jp:"星野リゾート",u:"https://www.hoshinoresorts.com/",ind:"Hospitality / Spatial",tier:"friendly",loc:"長野・全国",t:["spatial","graphic","adobe-2d","aesthetic","approachable","collaborative","communicative","brand-building","intimate","observant"],s:["空間演出","グラフィック","Adobe全般","ホスピタリティ","ブランド体験設計"],d:"リゾートホテル運営。施設のサイン計画、グラフィック、空間演出のデザインチーム。"},
+{id:"hands",n:"Hands",jp:"ハンズ",u:"https://hands.net/",ind:"DIY / Variety",tier:"friendly",loc:"東京・全国",t:["graphic","spatial","adobe-2d","approachable","collaborative","communicative","hands-on","intimate","culture-trend"],s:["Illustrator","POP制作","VMD","DIY知識","SNS企画"],d:"DIY・クラフト系の大型バラエティショップ。POP・VMD・イベント企画のデザイン。"},
+{id:"abc_mart",n:"ABC-MART",jp:"ABCマート",u:"https://www.abc-mart.net/",ind:"Footwear Retail",tier:"friendly",loc:"東京・全国",t:["graphic","web","adobe-2d","figma","approachable","collaborative","communicative","large-impact","hands-on","brand-building"],s:["Illustrator","Photoshop","ECデザイン","バナー制作","VMD"],d:"靴の大手小売チェーン。EC・販促物・店舗VMDのデザイン部門でインターン可能。"},
+// 食品・飲料
+{id:"suntory",n:"Suntory",jp:"サントリー",u:"https://www.suntory.co.jp/",ind:"Beverage / Package",tier:"friendly",loc:"大阪・東京",t:["graphic","product","adobe-2d","aesthetic","brand-building","collaborative","client-facing","large-impact","observant","culture-trend","create-ideas"],s:["パッケージデザイン","Illustrator","Photoshop","ブランディング","コンセプト設計"],d:"飲料・酒類の大手。パッケージ・広告・ブランドデザインのクリエイティブ部門。"},
+{id:"meiji_co",n:"Meiji",jp:"明治",u:"https://www.meiji.co.jp/",ind:"Food / Package",tier:"friendly",loc:"東京",t:["graphic","product","adobe-2d","functional","brand-building","collaborative","approachable","large-impact","observant","hands-on"],s:["パッケージデザイン","Illustrator","Photoshop","商品企画","ブランド管理"],d:"チョコレート・乳製品の大手食品メーカー。パッケージデザインの実務を学べる。"},
+{id:"calbee",n:"Calbee",jp:"カルビー",u:"https://www.calbee.co.jp/",ind:"Food / Package",tier:"friendly",loc:"東京",t:["graphic","product","adobe-2d","functional","brand-building","collaborative","approachable","large-impact","hands-on","create-ideas"],s:["パッケージデザイン","Illustrator","Photoshop","消費者調査","商品コンセプト"],d:"スナック菓子の大手。パッケージリニューアルや新商品のデザイン開発。"},
+// エンタメ・ゲーム(追加)
+{id:"mixi",n:"MIXI",jp:"ミクシィ",u:"https://mixi.co.jp/",ind:"Game / SNS",tier:"friendly",loc:"東京・渋谷",t:["game","web","ux","figma","game-engine","adobe-2d","collaborative","create-ideas","hands-on","approachable","innovative"],s:["UIデザイン","Figma","ゲームUI","Illustrator","コミュニケーション"],d:"モンスト等のゲーム運営。ゲームUI・Webサービスのデザイナーインターン。"},
+{id:"dena",n:"DeNA",jp:"ディー・エヌ・エー",u:"https://dena.com/jp/",ind:"Game / Tech",tier:"friendly",loc:"東京・渋谷",t:["game","web","ux","figma","frontend-code","game-engine","collaborative","innovative","large-impact","hands-on","solve-problems"],s:["UIデザイン","Figma","ゲームUI","フロントエンド","プロダクト思考"],d:"ゲーム・AI・ヘルスケアの大手IT企業。サマーインターンでデザイナー職あり。"},
+{id:"gree",n:"GREE",jp:"グリー",u:"https://corp.gree.net/jp/",ind:"Game / VR",tier:"friendly",loc:"東京",t:["game","web","ux","figma","game-engine","collaborative","innovative","hands-on","approachable","create-ideas"],s:["UIデザイン","Figma","ゲームUI","3DCG","VR/ARコンテンツ"],d:"ゲーム・メタバース・VR事業。ゲームUIデザイナーやVRデザインのインターン。"},
+{id:"uzabase",n:"Uzabase",jp:"ユーザベース",u:"https://www.uzabase.com/jp/",ind:"Media / SaaS",tier:"friendly",loc:"東京",t:["web","ux","graphic","figma","analytical","collaborative","solve-problems","innovative","large-impact","research-driven","hands-on"],s:["Figma","UIデザイン","情報設計","データ可視化","ビジネス感覚"],d:"NewsPicks運営。経済メディアのUIデザインやインフォグラフィックスのインターン。"},
+{id:"asahi_ad",n:"Asahi Advertising",jp:"朝日広告社",u:"https://www.asakonet.co.jp/",ind:"Advertising",tier:"friendly",loc:"東京",t:["graphic","motion","adobe-2d","video-edit","collaborative","client-facing","communicative","large-impact","director-pm"],s:["Adobe全般","企画力","広告クリエイティブ","プレゼンテーション","コミュニケーション"],d:"朝日新聞グループの広告会社。新聞広告からデジタル広告まで幅広い制作経験。"},
+// ── 多摩地域：デザインで飛躍しそうな20社 ──
+// 地元デザイン・制作会社
+{id:"senku",n:"Senku",jp:"千空",u:"http://www.senku.jp/",ind:"Web / System",tier:"tama",loc:"八王子市",t:["web","frontend-code","figma","collaborative","solve-problems","hands-on","approachable","intimate","communicative"],s:["HTML/CSS/JS","Figma","WordPress","システム開発","多言語サイト"],d:"八王子拠点のWeb制作会社。明星大学学部サイトや東京富士美術館サイト等の制作実績あり。地元大学との連携が強み。"},
+{id:"bondesign",n:"BON DESIGN",jp:"ボンデザイン",u:"https://www.bondesign.jp/",ind:"Web / Graphic",tier:"tama",loc:"八王子市",t:["web","graphic","frontend-code","figma","adobe-2d","solve-problems","collaborative","hands-on","approachable","intimate","brand-building"],s:["Webデザイン","Figma","CMS構築","ブランディング","UIデザイン"],d:"グッドデザイン賞受賞歴のある八王子のWeb制作会社。企画からデザイン・構築・運営までトータルで担当。少数精鋭。"},
+{id:"blancell",n:"BLANCELL",jp:"ブランセル",u:"https://blancell.jp/",ind:"Web / Branding",tier:"tama",loc:"多摩地域",t:["web","graphic","branding","frontend-code","figma","adobe-2d","collaborative","client-facing","brand-building","communicative","approachable"],s:["Webデザイン","Figma","ブランディング","ロゴ制作","コンサルティング"],d:"多摩地域拠点のWeb・ブランディング会社。自治体・学校法人・企業サイトまで幅広く対応。"},
+{id:"infotec",n:"Infotec",jp:"インフォテック",u:"https://www.infotec.co.jp/",ind:"Print / Web",tier:"tama",loc:"多摩市",t:["graphic","web","print","adobe-2d","frontend-code","collaborative","client-facing","communicative","hands-on","approachable","functional"],s:["Illustrator","Photoshop","Webデザイン","印刷知識","DTP"],d:"多摩市の印刷+Web制作会社。紙とWebの同時進行ができる強みで地域企業を支援。"},
+{id:"htp",n:"HTP",jp:"エイチティーピー",u:"https://www.htp.vc/",ind:"Web / Graphic",tier:"tama",loc:"多摩市",t:["web","graphic","adobe-2d","frontend-code","collaborative","client-facing","communicative","hands-on","approachable","intimate"],s:["Webデザイン","Illustrator","チラシ・パンフレット","名刺デザイン","SNS運用"],d:"多摩市のHP・チラシ制作会社。日野・府中・調布エリアの中小企業を中心に対応。地域密着型。"},
+{id:"eightgr",n:"EightGraphic",jp:"エイトグラフィック",u:"https://eightgraphic.info/",ind:"Graphic / Web",tier:"tama",loc:"八王子市",t:["graphic","web","adobe-2d","frontend-code","create-ideas","collaborative","hands-on","approachable","intimate","client-facing"],s:["Illustrator","Photoshop","チラシ・パンフレット","Webデザイン","Tシャツ等グッズ"],d:"八王子・多摩地域密着のグラフィックデザイナー。地域活性化への貢献を目指す。"},
+// 多摩の大手メーカー（デザインで飛躍）
+{id:"hino_motors",n:"Hino Motors",jp:"日野自動車",u:"https://www.hino.co.jp/",ind:"Automotive / Truck",tier:"tama",loc:"日野市",t:["product","ux","cad-3d","functional","collaborative","large-impact","observant","hands-on","approachable","solve-problems","innovative"],s:["プロダクトデザイン","UI/UXデザイン","3D CAD","人間工学","コンセプト設計"],d:"トラック・バスのメーカー。日野市本社。次世代モビリティのUI/UXやブランドデザインにデザイン人材が求められる領域。"},
+{id:"konica",n:"Konica Minolta",jp:"コニカミノルタ",u:"https://www.konicaminolta.com/jp-ja/",ind:"Imaging / Office",tier:"tama",loc:"八王子市",t:["product","ux","cad-3d","figma","functional","innovative","collaborative","large-impact","observant","solve-problems","analytical"],s:["UIデザイン","プロダクトデザイン","3D CAD","ユーザーリサーチ","デザイン思考"],d:"複合機・計測機器の大手。八王子に開発拠点。デザインセンターでUX/プロダクトデザインを推進中。"},
+{id:"fuji_elec",n:"Fuji Electric",jp:"富士電機",u:"https://www.fujielectric.co.jp/",ind:"Industrial / Energy",tier:"tama",loc:"日野市",t:["product","ux","cad-3d","functional","collaborative","large-impact","solve-problems","hands-on","approachable","analytical"],s:["UIデザイン","プロダクトデザイン","HMI設計","3D CAD","情報デザイン"],d:"産業用機器・自動販売機のメーカー。日野市に本社・工場。自販機UIや制御パネルのデザイン改善余地大。"},
+{id:"olympus",n:"Olympus",jp:"オリンパス",u:"https://www.olympus.co.jp/",ind:"Medical / Optics",tier:"tama",loc:"八王子市",t:["product","ux","cad-3d","functional","innovative","collaborative","large-impact","observant","solve-problems","specialist","analytical","research-driven"],s:["プロダクトデザイン","UIデザイン","3D CAD","人間工学","医療知識"],d:"内視鏡等の医療機器大手。八王子に技術拠点。医療現場のUXデザインは社会的インパクト大。"},
+{id:"sii",n:"Seiko Instruments",jp:"セイコーインスツル",u:"https://www.sii.co.jp/jp/",ind:"Precision Instruments",tier:"tama",loc:"八王子市",t:["product","cad-3d","functional","aesthetic","focused-solo","observant","specialist","hands-on"],s:["プロダクトデザイン","3D CAD","精密設計","CMFデザイン","品質へのこだわり"],d:"セイコーグループの精密機器メーカー。八王子拠点。ウォッチ部品や計測器のプロダクトデザイン。"},
+{id:"hoya",n:"HOYA",jp:"HOYA",u:"https://www.hoya.co.jp/",ind:"Optics / MedTech",tier:"tama",loc:"昭島市",t:["product","cad-3d","functional","innovative","collaborative","large-impact","specialist","analytical","observant"],s:["プロダクトデザイン","3D CAD","光学知識","素材工学","ブランドデザイン"],d:"眼鏡レンズ・半導体用ガラスの大手。昭島拠点。BtoBだがブランドデザイン強化で飛躍余地あり。"},
+// 地域インフラ・サービス（デザインで地域活性化）
+{id:"tamashin",n:"Tama Shinkin Bank",jp:"多摩信用金庫",u:"https://www.tamashin.jp/",ind:"Regional Finance",tier:"tama",loc:"立川市",t:["graphic","web","ux","adobe-2d","figma","approachable","collaborative","communicative","intimate","brand-building","solve-problems"],s:["Webデザイン","Illustrator","UXデザイン","地域コミュニケーション","ブランディング"],d:"多摩地域最大の信用金庫。立川本社。DX推進やブランディングにデザイン人材の活躍余地が大きい。"},
+{id:"keio_rail",n:"Keio Corporation",jp:"京王電鉄",u:"https://www.keio.co.jp/",ind:"Railway / Real Estate",tier:"tama",loc:"多摩地域全域",t:["graphic","spatial","ux","adobe-2d","figma","arch-cad","collaborative","communicative","large-impact","brand-building","approachable","director-pm"],s:["空間デザイン","サインデザイン","グラフィック","Webデザイン","沿線ブランディング"],d:"京王線・井の頭線を運営。駅のサイン計画、沿線開発、商業施設のデザインなど、デザイン活用の幅が広い。"},
+{id:"tamamono",n:"Tama Monorail",jp:"多摩都市モノレール",u:"https://www.tama-monorail.co.jp/",ind:"Transport",tier:"tama",loc:"立川市〜多摩市",t:["graphic","spatial","ux","adobe-2d","figma","approachable","collaborative","communicative","intimate","brand-building","functional"],s:["サインデザイン","グラフィック","Webデザイン","利用者UX","地域ブランディング"],d:"立川〜多摩センターを結ぶモノレール。駅空間のUX改善、サインデザイン、沿線PRにデザイン力を求む。"},
+{id:"subaru_m",n:"SUBARU",jp:"SUBARU",u:"https://www.subaru.co.jp/",ind:"Automotive",tier:"tama",loc:"三鷹市",t:["product","ux","cad-3d","functional","innovative","collaborative","large-impact","observant","specialist","hands-on","create-ideas"],s:["カーデザイン","UI/UXデザイン","3D CAD","CMFデザイン","コンセプトモデル"],d:"自動車メーカー。三鷹に東京事業所。車両デザイン、インテリアUI、ブランドデザインのインターン。"},
+{id:"toshiba_f",n:"Toshiba",jp:"東芝",u:"https://www.global.toshiba/jp/top.html",ind:"Infrastructure / Energy",tier:"tama",loc:"府中市",t:["product","ux","cad-3d","functional","innovative","collaborative","large-impact","solve-problems","analytical","director-pm","hands-on"],s:["UIデザイン","情報デザイン","HMI設計","プレゼンテーション","デザイン思考"],d:"府中事業所は社会インフラ中核拠点。発電所や鉄道の制御UIなど、デザインで社会インフラを変える。"},
+{id:"nec_f",n:"NEC",jp:"日本電気",u:"https://jpn.nec.com/",ind:"IT / Public Solution",tier:"tama",loc:"府中市",t:["web","ux","figma","functional","innovative","collaborative","large-impact","solve-problems","analytical","director-pm"],s:["UIデザイン","Figma","情報設計","サービスデザイン","ユーザーリサーチ"],d:"府中事業場を持つIT大手。行政DXやスマートシティのUXデザインで、多摩から社会を変えるポテンシャル。"},
+{id:"tour_online",n:"Tour Online",jp:"ツアーオンライン",u:"https://www.tachikawa.online/",ind:"Local Media / Web",tier:"tama",loc:"立川市",t:["web","frontend-code","figma","adobe-2d","collaborative","communicative","intimate","hands-on","approachable","brand-building","culture-trend"],s:["Webデザイン","HTML/CSS","WordPress","地域メディア運営","写真撮影"],d:"「タチカワオンライン」等の多摩地域ポータル運営。300社超のHP保守実績。地域に根差したWeb制作。"},
+// ── 多摩地域：製造系30社 ──
+{id:"fukunaga",n:"Fukunaga-Print",jp:"福永紙工",u:"https://www.fukunaga-print.co.jp/",ind:"Paper Craft / Print",tier:"tama",loc:"立川市",t:["product","graphic","print","handcraft","adobe-2d","create-ideas","aesthetic","focused-solo","observant","specialist","experimental","intimate","brand-building","entrepreneur"],s:["紙加工・印刷技術","デザイナー協働","パッケージ設計","Illustrator","プロダクト企画"],d:"「かみの工作所」「テラダモケイ」で世界的に知られる紙加工会社。MoMAでも販売。デザイナーと直接協働して紙の可能性を追求。"},
+{id:"juki",n:"JUKI",jp:"JUKI",u:"https://www.juki.co.jp/",ind:"Sewing Machine / SMT",tier:"tama",loc:"多摩市",t:["product","cad-3d","functional","innovative","collaborative","large-impact","specialist","hands-on","observant","solve-problems"],s:["プロダクトデザイン","3D CAD","UI設計","人間工学","工業デザイン"],d:"工業用ミシン世界トップシェア。多摩市本社。縫製機器・産業機器のプロダクトデザインやUIに可能性。"},
+{id:"casio",n:"CASIO",jp:"カシオ計算機",u:"https://www.casio.co.jp/",ind:"Electronics / Watch",tier:"tama",loc:"八王子市",t:["product","ux","cad-3d","functional","innovative","create-ideas","collaborative","large-impact","specialist","hands-on","aesthetic","brand-building"],s:["プロダクトデザイン","UIデザイン","3D CAD","CMFデザイン","ブランディング"],d:"G-SHOCK、電子辞書、電卓の大手。八王子に技術センター。「タフネス」の世界観をデザインで表現。"},
+{id:"terumo",n:"Terumo",jp:"テルモ",u:"https://www.terumo.co.jp/",ind:"Medical Device",tier:"tama",loc:"日野市",t:["product","ux","cad-3d","functional","innovative","collaborative","large-impact","solve-problems","observant","specialist","analytical","research-driven"],s:["医療機器デザイン","3D CAD","ユーザビリティ","人間工学","ヘルスケアUX"],d:"体温計・注射器・カテーテルの医療機器メーカー。日野市に研究開発拠点。「医療を通じて社会に貢献」。"},
+{id:"yokogawa",n:"Yokogawa Electric",jp:"横河電機",u:"https://www.yokogawa.co.jp/",ind:"Industrial Measurement",tier:"tama",loc:"武蔵野市",t:["product","ux","cad-3d","functional","innovative","collaborative","large-impact","solve-problems","analytical","specialist","research-driven"],s:["HMIデザイン","情報デザイン","UIデザイン","データ可視化","制御システム"],d:"産業用計測・制御機器の大手。武蔵野本社。プラント制御のHMIやデータ可視化はデザインで飛躍する領域。"},
+{id:"citizen",n:"CITIZEN",jp:"シチズン時計",u:"https://www.citizen.co.jp/",ind:"Watch / Precision",tier:"tama",loc:"西東京市",t:["product","cad-3d","handcraft","aesthetic","functional","focused-solo","observant","specialist","brand-building","create-ideas"],s:["プロダクトデザイン","3D CAD","CMFデザイン","精密加工","ブランディング"],d:"光発電エコ・ドライブの時計メーカー。西東京に本社。時計デザインは機能美の極致。"},
+{id:"foster",n:"Foster Electric",jp:"フォスター電機",u:"https://www.foster.co.jp/",ind:"Audio / Speaker",tier:"tama",loc:"昭島市",t:["product","cad-3d","functional","aesthetic","innovative","focused-solo","specialist","hands-on","observant"],s:["プロダクトデザイン","音響工学","3D CAD","CMFデザイン","ユーザー体験"],d:"ヘッドフォン・スピーカーユニットの大手。昭島拠点。音響製品のプロダクトデザインで差別化。"},
+{id:"jrc",n:"JRC",jp:"日本無線",u:"https://www.jrc.co.jp/",ind:"Radio / Maritime",tier:"tama",loc:"三鷹市",t:["product","ux","cad-3d","functional","innovative","collaborative","large-impact","solve-problems","analytical","specialist"],s:["UIデザイン","HMIデザイン","プロダクトデザイン","情報デザイン","3D CAD"],d:"船舶・防災用無線通信機器メーカー。三鷹拠点。レーダーや無線機のUI/UXにデザイン改善の余地。"},
+{id:"mitaka_kohki",n:"Mitaka Kohki",jp:"三鷹光器",u:"https://www.mitakakohki.co.jp/",ind:"Precision Optics",tier:"tama",loc:"三鷹市",t:["product","cad-3d","handcraft","functional","aesthetic","focused-solo","specialist","observant","innovative","research-driven"],s:["光学設計","精密加工","プロダクトデザイン","手仕事の技術","科学的素養"],d:"天体望遠鏡・手術用顕微鏡の精密光学メーカー。三鷹の町工場から世界水準の光学機器を製造。"},
+{id:"tachihi",n:"Tachihi Holdings",jp:"立飛ホールディングス",u:"https://www.tachihi.co.jp/",ind:"Real Estate / Town Dev",tier:"tama",loc:"立川市",t:["spatial","graphic","branding","arch-cad","adobe-2d","collaborative","large-impact","brand-building","innovative","culture-trend","director-pm"],s:["空間デザイン","ブランディング","グラフィック","まちづくり企画","施設デザイン"],d:"GREEN SPRINGS等を開発する立川のまちづくり企業。旧立川飛行機の歴史をもち、多摩のクリエイティブ拠点化を推進。"},
+{id:"ishikawa_sake",n:"Ishikawa Brewery",jp:"石川酒造",u:"https://www.tamajiman.co.jp/",ind:"Sake / Craft Beer",tier:"tama",loc:"福生市",t:["product","graphic","handcraft","adobe-2d","aesthetic","brand-building","culture-trend","create-ideas","intimate","focused-solo","observant","entrepreneur"],s:["パッケージデザイン","ラベルデザイン","Illustrator","ブランディング","写真撮影"],d:"1863年創業の酒蔵「多満自慢」「TOKYO BLUES」。福生の歴史的建造物でクラフトビールも醸造。パッケージや空間のデザインで飛躍余地。"},
+{id:"ozawa_sake",n:"Ozawa Brewery",jp:"小澤酒造",u:"https://www.sawanoi-sake.com/",ind:"Sake Brewery",tier:"tama",loc:"青梅市",t:["product","graphic","handcraft","adobe-2d","aesthetic","brand-building","culture-trend","create-ideas","intimate","focused-solo","observant"],s:["パッケージデザイン","ラベルデザイン","Illustrator","写真撮影","文化発信"],d:"奥多摩の清流で醸す「澤乃井」の酒蔵。ラベル・パッケージ・観光体験のデザインリニューアルに可能性。"},
+{id:"tachikawa_blind",n:"Tachikawa Blind",jp:"立川ブラインド工業",u:"https://www.tachikawa-blind.co.jp/",ind:"Blind / Partition",tier:"tama",loc:"立川市",t:["product","spatial","cad-3d","arch-cad","functional","aesthetic","collaborative","large-impact","specialist","brand-building","observant"],s:["プロダクトデザイン","空間デザイン","3D CAD","インテリアコーディネート","カタログ制作"],d:"ブラインド・間仕切りの大手メーカー。立川が創業地。窓周り製品のデザインとカタログ制作で飛躍。"},
+{id:"tama_grp",n:"Tama Grp.",jp:"多摩グラフィックプロダクツ",u:"https://www.tamagp.co.jp/",ind:"Sign / Display",tier:"tama",loc:"日野市",t:["graphic","spatial","print","adobe-2d","collaborative","client-facing","hands-on","approachable","communicative","brand-building"],s:["サインデザイン","Illustrator","大判印刷","ディスプレイ","施工管理"],d:"看板・サイン・ディスプレイの製造施工。日野市拠点。店舗サインや展示のデザイン提案力を強化中。"},
+{id:"tokyo_rusk",n:"Tokyo Rusk",jp:"東京ラスク",u:"https://www.tokyorusk.co.jp/",ind:"Confectionery",tier:"tama",loc:"立川市",t:["product","graphic","adobe-2d","brand-building","approachable","create-ideas","aesthetic","culture-trend","intimate","collaborative"],s:["パッケージデザイン","Illustrator","Photoshop","ブランディング","店舗デザイン"],d:"立川発のラスク菓子メーカー。工場直売店も運営。パッケージ・ギフトボックスのデザインが売上を左右。"},
+{id:"ihi_aero",n:"IHI",jp:"IHI",u:"https://www.ihi.co.jp/",ind:"Aerospace / Energy",tier:"tama",loc:"昭島市",t:["product","cad-3d","functional","innovative","collaborative","large-impact","specialist","analytical","research-driven","solve-problems"],s:["工業デザイン","3D CAD","テクニカルイラスト","情報デザイン","プレゼンテーション"],d:"航空エンジン・産業機械の重工メーカー。瑞穂工場等で多摩に生産拠点。テクニカルコミュニケーションにデザイン力。"},
+{id:"riken_keiki",n:"Riken Keiki",jp:"理研計器",u:"https://www.rikenkeiki.co.jp/",ind:"Gas Detection",tier:"tama",loc:"八王子市(板橋製造)",t:["product","ux","cad-3d","functional","solve-problems","collaborative","specialist","hands-on","observant","analytical"],s:["プロダクトデザイン","UIデザイン","3D CAD","安全設計","ユーザビリティ"],d:"ガス検知器の大手メーカー。作業現場の安全を守る機器のUI/UX改善にデザインが貢献する余地。"},
+{id:"tama_orimono",n:"Tama Orimono",jp:"多摩織（八王子織物工業組合）",u:"https://hachioji-orimono.jp/",ind:"Traditional Textile",tier:"tama",loc:"八王子市",t:["fashion","handcraft","aesthetic","culture-trend","create-ideas","focused-solo","observant","specialist","intimate","entrepreneur"],s:["テキスタイルデザイン","織物技法","Illustrator","パターン設計","伝統工芸知識"],d:"経済産業大臣指定伝統的工芸品「多摩織」。八王子は江戸時代からの織物産地。伝統技術×現代デザインの融合に挑戦。"},
+{id:"denka_ome",n:"Denka",jp:"デンカ",u:"https://www.denka.co.jp/",ind:"Chemical / Material",tier:"tama",loc:"青梅市",t:["product","cad-3d","functional","innovative","collaborative","large-impact","specialist","analytical","research-driven","solve-problems"],s:["素材知識","情報デザイン","テクニカルライティング","プレゼンテーション","3D CG"],d:"化学素材メーカー。青梅に工場。先端素材のBtoBブランディングやテクニカルコミュニケーションにデザイン力。"},
+{id:"vertere",n:"VERTERE",jp:"バテレ",u:"https://vertere.jp/",ind:"Craft Beer",tier:"tama",loc:"奥多摩町",t:["product","graphic","handcraft","adobe-2d","aesthetic","brand-building","culture-trend","create-ideas","intimate","entrepreneur","innovative"],s:["パッケージデザイン","ラベルデザイン","Illustrator","ブランディング","SNS運用"],d:"奥多摩発のクラフトビール醸造所。ラベル・タップルームのデザインが洗練されており、多摩発ブランドの好例。"},
+{id:"tokyo_nishikawa",n:"Nishikawa",jp:"西川(旧東京西川)",u:"https://www.nishikawa1566.com/",ind:"Bedding / Sleep",tier:"tama",loc:"日野市(物流拠点)",t:["product","graphic","adobe-2d","functional","approachable","collaborative","brand-building","large-impact","observant","culture-trend"],s:["パッケージデザイン","Illustrator","Photoshop","店頭ディスプレイ","ブランディング"],d:"1566年創業の寝具メーカー「西川」。多摩に物流拠点。睡眠×デザインで製品やサービス体験を向上。"},
+{id:"nissan_kohki",n:"Nissan Tanaka",jp:"日酸TANAKA",u:"https://www.nissantanaka.com/",ind:"Welding / Cutting",tier:"tama",loc:"日野市",t:["product","cad-3d","functional","collaborative","hands-on","specialist","solve-problems","observant"],s:["工業デザイン","3D CAD","UIデザイン","カタログ制作","テクニカルイラスト"],d:"溶接・切断機器メーカー。日野市本社。産業機器のUIやカタログデザインの改善でブランド価値向上。"},
+{id:"alps_alpine_tama",n:"Alps Alpine",jp:"アルプスアルパイン",u:"https://www.alpsalpine.com/j/",ind:"Electronic Parts",tier:"tama",loc:"大田区(八王子に拠点)",t:["product","ux","cad-3d","functional","innovative","collaborative","specialist","hands-on","analytical","large-impact"],s:["UIデザイン","HMI設計","3D CAD","ユーザビリティ","車載機器デザイン"],d:"電子部品・車載情報機器メーカー。多摩地域に開発拠点。車載HMI(ハプティクス等)のデザインで飛躍。"},
+{id:"kyocera_tama",n:"Kyocera",jp:"京セラ(八王子事業所)",u:"https://www.kyocera.co.jp/",ind:"Ceramics / Electronics",tier:"tama",loc:"八王子市",t:["product","cad-3d","functional","innovative","collaborative","large-impact","specialist","aesthetic","research-driven","hands-on"],s:["プロダクトデザイン","3D CAD","セラミック知識","パッケージ","カタログ制作"],d:"セラミック技術の総合メーカー。八王子に事業所。ファインセラミックスの美しさをデザインで訴求。"},
+{id:"fuji_film_tama",n:"Fujifilm BI",jp:"富士フイルムBI(日野)",u:"https://www.fujifilm.com/fb/",ind:"Office / Imaging",tier:"tama",loc:"日野市",t:["product","ux","cad-3d","figma","functional","innovative","collaborative","large-impact","solve-problems","analytical","specialist"],s:["UIデザイン","プロダクトデザイン","3D CAD","ユーザビリティ","情報設計"],d:"複合機・ドキュメント機器の大手。日野市に開発拠点。オフィス機器のUI/UX改善にデザイン人材を求む。"},
+{id:"tama_tec_cntr",n:"Tama TEC",jp:"たましん地域経済研究所",u:"https://www.tamashin.jp/tec/",ind:"Regional Research",tier:"tama",loc:"立川市",t:["graphic","web","ux","adobe-2d","figma","analytical","research-driven","collaborative","communicative","intimate","brand-building","solve-problems"],s:["情報デザイン","データ可視化","リサーチ","Illustrator","レポートデザイン"],d:"多摩信用金庫系列の地域シンクタンク。多摩地域の産業調査レポートやイベントのデザイン力で地域を牽引。"},
+{id:"tama_cable",n:"Tama Cable Network",jp:"多摩ケーブルネットワーク",u:"https://www.t-net.ne.jp/",ind:"Cable TV / Media",tier:"tama",loc:"青梅市",t:["motion","web","graphic","video-edit","adobe-2d","collaborative","communicative","intimate","hands-on","approachable","culture-trend"],s:["映像制作","Adobe Premiere","Webデザイン","グラフィック","地域取材"],d:"青梅・奥多摩エリアのケーブルTV。地域密着の映像制作やWebデザインでデザイン人材が活躍する場。"},
+{id:"okutama_mokuzai",n:"Tokyo Timber",jp:"東京の木・多摩産材(東京都森林組合)",u:"https://www.tokyoringyou.or.jp/",ind:"Forestry / Wood",tier:"tama",loc:"青梅市・あきる野市",t:["product","spatial","handcraft","functional","approachable","intimate","culture-trend","create-ideas","observant","entrepreneur"],s:["木材加工","プロダクトデザイン","空間デザイン","Illustrator","地域資源活用"],d:"多摩産材(東京の木)の活用を推進。木製プロダクトや空間デザインで地域資源をブランド化する取り組み。"},
+{id:"green_springs",n:"GREEN SPRINGS",jp:"グリーンスプリングス",u:"https://greensprings.jp/",ind:"Commercial Complex",tier:"tama",loc:"立川市",t:["spatial","graphic","branding","adobe-2d","arch-cad","collaborative","large-impact","brand-building","culture-trend","innovative","communicative","approachable"],s:["空間デザイン","グラフィック","サイン計画","イベント企画","ブランディング"],d:"立飛HDが開発したウェルビーイング型商業施設。福永紙工のショップも入居。多摩クリエイティブの拠点。"},
+];
+
+/* ═══════════ TAG-BASED QUESTIONS ═══════════ */
+const QUESTIONS=[
+  {cat:"興味分野 / Interest",title:"最も興味のあるデザインの分野は何ですか?",sub:"直感で1つ選んでください",type:"single",opts:[
+    {l:"A",t:"グラフィック・ブランディング",d:"ロゴ、エディトリアル、装丁、視覚伝達",tags:{graphic:10,branding:5,print:3}},
+    {l:"B",t:"UI / UX・デジタルプロダクト",d:"アプリやWebサービスの体験設計",tags:{ux:10,web:4,figma:2}},
+    {l:"C",t:"プロダクト・工業デザイン",d:"家具、雑貨、実験的プロダクト",tags:{product:10,"cad-3d":3}},
+    {l:"D",t:"空間・建築・インテリア",d:"店舗、住宅、展示空間",tags:{spatial:10,"arch-cad":3}},
+    {l:"E",t:"映像・モーショングラフィックス",d:"MV、CM、ブランドフィルム",tags:{motion:10,"video-edit":3}},
+    {l:"F",t:"Web・インタラクション",d:"Web表現、テクノロジー×デザイン",tags:{web:10,interactive:5,"frontend-code":3}},
+    {l:"G",t:"ゲーム・エンタメ",d:"ゲームUI、世界観、キャラクター",tags:{game:10,"game-engine":3}},
+    {l:"H",t:"ファッション・テキスタイル",d:"服、布、身体を取り巻くもの",tags:{fashion:10,handcraft:3}},
+  ]},
+  {cat:"やりがい / Drive",title:"制作の中で最も心が動く瞬間は?",sub:"あなたの原動力に近いものを1つ",type:"single",opts:[
+    {l:"A",t:"自分のアイデアを形にする時",d:"頭の中のイメージが現実になる",tags:{"create-ideas":5,handcraft:2}},
+    {l:"B",t:"誰かの課題が解決される時",d:"ユーザーの悩みを設計で解決",tags:{"solve-problems":5,functional:2}},
+    {l:"C",t:"美しいビジュアルが完成する時",d:"細部まで磨き上げた造形美",tags:{aesthetic:6,observant:2}},
+    {l:"D",t:"新しい体験を生み出す時",d:"見たことのない感覚を作る",tags:{"new-experience":5,innovative:3}},
+    {l:"E",t:"文化やトレンドを発信する時",d:"時代の空気を作る側に回る",tags:{"culture-trend":5,expressive:2}},
+  ]},
+  {cat:"得意ツール / Tools",title:"得意な、あるいは興味のあるツールは?",sub:"複数選択できます(2〜4個目安)",type:"multi",opts:[
+    {l:"A",t:"Illustrator / Photoshop",d:"2Dグラフィック、画像合成",tags:{"adobe-2d":4}},
+    {l:"B",t:"Figma / Adobe XD",d:"UIデザイン、プロトタイピング",tags:{figma:4}},
+    {l:"C",t:"Rhinoceros / Fusion 360",d:"3Dモデリング(プロダクト系)",tags:{"cad-3d":4}},
+    {l:"D",t:"AutoCAD / SketchUp / VW",d:"建築・空間系の図面",tags:{"arch-cad":4}},
+    {l:"E",t:"After Effects / Premiere",d:"映像編集、モーション",tags:{"video-edit":4}},
+    {l:"F",t:"HTML / CSS / JavaScript",d:"Webコーディング",tags:{"frontend-code":4}},
+    {l:"G",t:"Unity / Unreal / 3DCG",d:"ゲーム制作、リアルタイム3D",tags:{"game-engine":4}},
+    {l:"H",t:"手描き・アナログ表現",d:"鉛筆、絵具、刺繍、テキスタイル",tags:{handcraft:4}},
+  ]},
+  {cat:"働き方 / Work Style",title:"どのような働き方に魅力を感じますか?",sub:"1つ選んでください",type:"single",opts:[
+    {l:"A",t:"チームで議論しながら作りたい",d:"多様な意見を統合する協働型",tags:{collaborative:4}},
+    {l:"B",t:"一人で集中して作り込みたい",d:"職人的に技を磨く専念型",tags:{"focused-solo":4}},
+    {l:"C",t:"クライアントと直接対話したい",d:"課題を聞き出し提案する",tags:{"client-facing":4}},
+    {l:"D",t:"リサーチや分析にも踏み込みたい",d:"データと感性の両輪で作る",tags:{"research-driven":4}},
+  ]},
+  {cat:"美意識 / Aesthetic",title:"デザインで最も大切にしたいことは?",sub:"あなたの軸を1つ",type:"single",opts:[
+    {l:"A",t:"機能性・使いやすさ",d:"使う人にとっての合理性",tags:{functional:4}},
+    {l:"B",t:"美しさ・造形性",d:"純粋なビジュアルの強度",tags:{aesthetic:4}},
+    {l:"C",t:"メッセージ性・コンセプト",d:"伝えたい思想や物語",tags:{conceptual:4}},
+    {l:"D",t:"革新性・新規性",d:"まだ世にないものを作る",tags:{innovative:4}},
+    {l:"E",t:"親しみやすさ・温かみ",d:"人の生活に寄り添う",tags:{approachable:4}},
+  ]},
+  {cat:"強み / Strength",title:"あなたが自信を持っている力は?",sub:"最も近いものを1つ",type:"single",opts:[
+    {l:"A",t:"観察力・洞察力",d:"細部に気づき、本質を見抜く",tags:{observant:4}},
+    {l:"B",t:"構造化・論理的思考",d:"情報を整理し体系化する",tags:{analytical:4}},
+    {l:"C",t:"感性・表現力",d:"感じたことを形にする",tags:{expressive:4}},
+    {l:"D",t:"実行力・手を動かす力",d:"とにかく作って試す",tags:{"hands-on":4}},
+    {l:"E",t:"コミュニケーション力",d:"人の声を聴き、橋渡しする",tags:{communicative:4}},
+  ]},
+  {cat:"規模感 / Scale",title:"関わりたいプロジェクトの性格は?",sub:"1つ選んでください",type:"single",opts:[
+    {l:"A",t:"大規模・社会的インパクト",d:"公共性のある大きな仕事",tags:{"large-impact":4}},
+    {l:"B",t:"個人やコミュニティに寄り添う",d:"顔の見える距離での仕事",tags:{intimate:4}},
+    {l:"C",t:"ブランドや企業の顔をつくる",d:"アイデンティティを設計",tags:{"brand-building":4}},
+    {l:"D",t:"実験的・尖った表現",d:"新しい領域への挑戦",tags:{experimental:4}},
+  ]},
+  {cat:"将来像 / Vision",title:"5年後、あなたはどんな存在でいたいですか?",sub:"理想像に最も近いものを1つ",type:"single",opts:[
+    {l:"A",t:"専門スキルを極めるスペシャリスト",d:"一芸に秀でた職人として",tags:{specialist:4}},
+    {l:"B",t:"全体を見るディレクター / PM",d:"プロジェクトを統括する",tags:{"director-pm":4}},
+    {l:"C",t:"自分のブランドを立ち上げる",d:"独立して自分の世界を作る",tags:{entrepreneur:4}},
+    {l:"D",t:"研究・実験的な領域に挑戦",d:"未知の表現を切り拓く",tags:{researcher:4}},
+  ]},
+];
+
+/* ═══════════ TAG → PROFILE TEXT FRAGMENTS ═══════════ */
+const TAG_LABELS={
+  graphic:"グラフィック",ux:"UI/UX",product:"プロダクト",spatial:"空間",motion:"映像",web:"Web",game:"ゲーム",fashion:"ファッション",interactive:"インタラクティブ",print:"印刷",branding:"ブランディング",lifestyle:"ライフスタイル",
+  "create-ideas":"アイデアを形にする力","solve-problems":"課題解決力","visual-beauty":"造形美への追求","new-experience":"新体験の創出","culture-trend":"文化発信力",
+  "adobe-2d":"Adobe 2D","figma":"Figma","cad-3d":"3D CAD","arch-cad":"建築CAD","video-edit":"映像編集","frontend-code":"フロントエンド","game-engine":"ゲームエンジン",handcraft:"手描き/アナログ",
+  collaborative:"チーム協働","focused-solo":"集中制作",  "client-facing":"対話型","research-driven":"リサーチ重視",
+  functional:"機能性重視",aesthetic:"美意識",conceptual:"コンセプト重視",innovative:"革新性",approachable:"親しみやすさ",
+  observant:"観察力",analytical:"論理的思考",expressive:"表現力","hands-on":"実行力",communicative:"コミュニケーション力",
+  "large-impact":"大規模プロジェクト",intimate:"コミュニティ密着","brand-building":"ブランド構築",experimental:"実験的表現",
+  specialist:"スペシャリスト志向","director-pm":"ディレクター志向",entrepreneur:"独立志向",researcher:"研究志向",
+};
+
+/* ═══════════ STATE ═══════════ */
+const state={currentQuestion:0,answers:[]};
+
+/* ═══════════ SCORING ═══════════ */
+function calculateScores(){
+  // Accumulate tag weights from answers
+  const tagWeights={};
+  state.answers.forEach((selected,qi)=>{
+    selected.forEach(oi=>{
+      const tags=QUESTIONS[qi].opts[oi].tags||{};
+      Object.entries(tags).forEach(([tag,w])=>{tagWeights[tag]=(tagWeights[tag]||0)+w;});
+    });
+  });
+  // Score each company
+  const scored=COMPANIES.map(c=>{
+    let score=0;
+    const matched=[];
+    c.t.forEach(tag=>{
+      if(tagWeights[tag]){score+=tagWeights[tag];matched.push(tag);}
+    });
+    return{company:c,score,matched};
+  });
+  scored.sort((a,b)=>b.score-a.score);
+  // Normalize to percentage (top = ~94%)
+  const topScore=scored[0]?.score||1;
+  scored.forEach(s=>{s.pct=Math.max(20,Math.round((s.score/topScore)*94));});
+  return{ranked:scored,tagWeights};
+}
+
+/* ═══════════ DYNAMIC WHY-MATCH ═══════════ */
+function buildWhyMatch(matched){
+  if(matched.length===0)return"あなたのプロフィールと共通する要素があります。";
+  const labels=matched.slice(0,4).map(t=>TAG_LABELS[t]||t).filter(Boolean);
+  if(labels.length<=2)return`あなたの「${labels.join("」と「")}」という特性が、この会社のカルチャーと響き合っています。`;
+  return`「${labels[0]}」「${labels[1]}」など${labels.length}つの要素が、この会社の求める人物像と重なります。`;
+}
+
+/* ═══════════ RENDERING ═══════════ */
+function renderQuestion(){
+  const q=QUESTIONS[state.currentQuestion];
+  const idx=state.currentQuestion;
+  document.getElementById('qNum').textContent=String(idx+1).padStart(2,'0');
+  document.getElementById('qCategory').innerHTML=q.cat;
+  document.getElementById('qCurrent').textContent=idx+1;
+  document.getElementById('qTotal').textContent=QUESTIONS.length;
+  document.getElementById('qTitle').textContent=q.title;
+  const subEl=document.getElementById('qSub');
+  subEl.textContent=q.sub;
+  subEl.classList.toggle('multi',q.type==='multi');
+  const pct=Math.round((idx/QUESTIONS.length)*100);
+  document.getElementById('progressFill').style.transform=`scaleX(${idx/QUESTIONS.length})`;
+  document.getElementById('progressPct').textContent=pct+'%';
+  // Mini progress
+  const mini=document.getElementById('progressMini');
+  mini.innerHTML='';
+  for(let i=0;i<QUESTIONS.length;i++){
+    const sp=document.createElement('span');
+    if(i<idx)sp.classList.add('done');
+    else if(i===idx)sp.classList.add('active');
+    mini.appendChild(sp);
+  }
+  // Options
+  const optsEl=document.getElementById('options');
+  optsEl.innerHTML='';
+  q.opts.forEach((opt,i)=>{
+    const isSelected=state.answers[idx]?.includes(i);
+    const btn=document.createElement('button');
+    btn.type='button';
+    btn.className='option'+(isSelected?' selected':'');
+    btn.innerHTML=`<div class="opt-top"><span class="opt-letter">${opt.l}</span><span class="opt-icon">${q.type==='multi'?'☐':'○'}</span></div><div class="opt-title">${opt.t}</div><div class="opt-desc">${opt.d}</div>`;
+    btn.addEventListener('click',()=>selectOption(i));
+    optsEl.appendChild(btn);
+  });
+  document.getElementById('prevBtn').disabled=(idx===0);
+  updateNextBtn();
+}
+
+function selectOption(optionIdx){
+  const q=QUESTIONS[state.currentQuestion];
+  if(q.type==='single'){
+    state.answers[state.currentQuestion]=[optionIdx];
+  }else{
+    const ans=state.answers[state.currentQuestion];
+    const i=ans.indexOf(optionIdx);
+    if(i>=0)ans.splice(i,1);else ans.push(optionIdx);
+  }
+  const optsEl=document.getElementById('options');
+  Array.from(optsEl.children).forEach((el,i)=>{
+    el.classList.toggle('selected',state.answers[state.currentQuestion].includes(i));
+  });
+  updateNextBtn();
+}
+
+function updateNextBtn(){
+  const ans=state.answers[state.currentQuestion]||[];
+  const isLast=state.currentQuestion===QUESTIONS.length-1;
+  const btn=document.getElementById('nextBtn');
+  btn.disabled=ans.length===0;
+  btn.innerHTML=isLast?'<span>結果を見る</span> <span>★</span>':'<span>次へ</span> <span>→</span>';
+}
+
+function showResults(){
+  document.getElementById('quiz').classList.remove('active');
+  document.getElementById('results').classList.add('active');
+  const{ranked,tagWeights}=calculateScores();
+  const top5=ranked.slice(0,5);
+  const others=ranked.slice(5,35);
+  // Date
+  const d=new Date();
+  document.getElementById('resultDate').textContent=`${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
+  // Profile text
+  const topTags=Object.entries(tagWeights).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([t])=>TAG_LABELS[t]||t);
+  document.getElementById('profileText').textContent=`あなたのプロフィール: ${topTags.join('、')}。以下、相性の高い5社をご紹介します。`;
+  // Render top 5
+  const listEl=document.getElementById('companiesList');
+  listEl.innerHTML='';
+  top5.forEach((entry,i)=>{
+    const c=entry.company;
+    const rank=i+1;
+    const tierLabel={boutique:'少数精鋭',established:'中堅・実力派',major:'大手・上場',friendly:'間口広い',tama:'📍多摩地域'}[c.tier]||'';
+    const tierClass='tier-'+c.tier;
+    const div=document.createElement('div');
+    div.className=`company rank-${rank}`;
+    div.innerHTML=`
+      <div class="company-rank"><div class="rank-num">${String(rank).padStart(2,'0')}</div><div class="rank-label">${rank===1?'BEST MATCH':'RANK '+String(rank).padStart(2,'0')}</div></div>
+      <div class="company-info">
+        <div class="company-tags">
+          <span class="company-tag tier ${tierClass}">${tierLabel}</span>
+          <span class="company-tag industry">${c.ind}</span>
+          <span class="company-tag">${c.loc}</span>
+        </div>
+        <a href="${c.u}" target="_blank" rel="noopener noreferrer" class="company-link">
+          <div class="company-name">${c.n}<span class="ext-icon">↗</span></div>
+          <div class="company-name-jp">${c.jp}</div>
+        </a>
+        <p class="company-desc">${c.d}</p>
+        <div class="why-match"><div class="why-match-label">— Why this matches you</div>${buildWhyMatch(entry.matched)}</div>
+        <a href="${c.u}" target="_blank" rel="noopener noreferrer" class="visit-link"><span>Visit Website</span><span class="arr">→</span></a>
+        <button type="button" class="email-btn" onclick="copyEmailTemplate('${c.jp}')"><span>📧</span><span>インターン問い合わせメールを作成</span></button>
+      </div>
+      <div class="company-skills">
+        <div class="match-display"><div class="match-pct">${entry.pct}<span class="sym">%</span></div><div class="match-label">Match Score<span class="strong">適合度</span></div></div>
+        <div class="skills-label">Required Skills</div>
+        <div class="skills-list">${c.s.map((sk,si)=>`<span class="skill${si<2?' essential':''}">${sk}</span>`).join('')}</div>
+      </div>`;
+    listEl.appendChild(div);
+  });
+  // Others
+  const othersEl=document.getElementById('othersList');
+  othersEl.innerHTML=others.map(o=>`<a href="${o.company.u}" target="_blank" rel="noopener noreferrer" class="others-link others-item"><span class="o-name">${o.company.n}</span><span class="o-pct">${o.pct}%</span></a>`).join('');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ═══════════ EMAIL TEMPLATE ═══════════ */
+function copyEmailTemplate(companyName){
+  const template=`件名：インターンシップに関するお問い合わせ（明星大学デザイン学部）
+
+${companyName} 御中
+
+突然のご連絡失礼いたします。
+明星大学デザイン学部に在籍しております、○○ ○○（氏名）と申します。
+
+貴社のデザインに対する姿勢や制作物に強く感銘を受け、ぜひインターンシップの機会をいただけないかと思い、ご連絡差し上げました。
+
+現在、大学ではデザインの基礎を学んでおり、実際の現場で実務を経験しながらスキルを磨きたいと考えております。未熟ではございますが、積極的に学び、貴社のお役に立てるよう努力いたします。
+
+つきましては、インターンシップの受け入れの可否や、もし可能であれば時期・期間・応募方法等をお教えいただけますと幸いです。
+
+ポートフォリオや履歴書等の資料は、ご要望に応じてお送りいたします。
+
+お忙しい中恐れ入りますが、ご検討のほどよろしくお願い申し上げます。
+
+────────────────
+○○ ○○（氏名）
+明星大学 デザイン学部 ○年
+メール：○○@○○
+電話：○○○-○○○○-○○○○
+────────────────`;
+
+  navigator.clipboard.writeText(template).then(()=>{
+    const toast=document.getElementById('emailToast');
+    toast.textContent='📧 '+companyName+' 宛のメールテンプレートをコピーしました';
+    toast.classList.add('show');
+    setTimeout(()=>toast.classList.remove('show'),3000);
+  }).catch(()=>{
+    // Fallback
+    const ta=document.createElement('textarea');
+    ta.value=template;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+    const toast=document.getElementById('emailToast');
+    toast.textContent='📧 メールテンプレートをコピーしました';
+    toast.classList.add('show');
+    setTimeout(()=>toast.classList.remove('show'),3000);
+  });
+}
+
+/* ═══════════ NAVIGATION ═══════════ */
+function startQuiz(){
+  document.getElementById('welcome').classList.remove('active');
+  document.getElementById('quiz').classList.add('active');
+  state.currentQuestion=0;
+  state.answers=QUESTIONS.map(()=>[]);
+  renderQuestion();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function nextQuestion(){
+  if(!state.answers[state.currentQuestion]||state.answers[state.currentQuestion].length===0)return;
+  if(state.currentQuestion===QUESTIONS.length-1){showResults();return;}
+  state.currentQuestion++;
+  renderQuestion();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function prevQuestion(){
+  if(state.currentQuestion===0)return;
+  state.currentQuestion--;
+  renderQuestion();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function restart(){
+  document.getElementById('results').classList.remove('active');
+  document.getElementById('welcome').classList.add('active');
+  state.currentQuestion=0;state.answers=[];
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ═══════════ EVENT LISTENERS (no inline onclick) ═══════════ */
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('startBtn').addEventListener('click',startQuiz);
+  document.getElementById('nextBtn').addEventListener('click',nextQuestion);
+  document.getElementById('prevBtn').addEventListener('click',prevQuestion);
+  document.getElementById('restartBtn').addEventListener('click',restart);
+});
+</script>
+</body>
+</html>
